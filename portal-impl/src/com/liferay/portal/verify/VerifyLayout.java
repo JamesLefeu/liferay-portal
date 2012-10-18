@@ -14,6 +14,8 @@
 
 package com.liferay.portal.verify;
 
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.model.Layout;
@@ -24,6 +26,7 @@ import java.util.List;
 /**
  * @author Brian Wing Shun Chan
  * @author Kenneth Chang
+ * @author James Lefeu
  */
 public class VerifyLayout extends VerifyProcess {
 
@@ -46,17 +49,41 @@ public class VerifyLayout extends VerifyProcess {
 	}
 
 	protected void verifyUuid() throws Exception {
-		verifyUuid("AssetEntry");
-		verifyUuid("JournalArticle");
 
-		StringBundler sb = new StringBundler(4);
+		_log.info("Adding Index IX_FEDFFFED to table AssetEntry");
+		runSQL(
+			"alter table AssetEntry "
+			+ " add index IX_FEDFFFED (layoutUuid);");
+		_log.info("Adding Index IX_FEFEFFED to table JournalArticle");
+		runSQL(
+			"alter table JournalArticle "
+			+ " add index IX_FEFEFFED (layoutUuid);");
+		_log.info("Adding Index IX_FEFDFFED to table Layout");
+		runSQL(
+			"alter table Layout "
+			+ " add index IX_FEFDFFED (sourcePrototypeLayoutUuid);");
 
-		sb.append("update Layout set uuid_ = sourcePrototypeLayoutUuid where ");
-		sb.append("sourcePrototypeLayoutUuid is not null and ");
-		sb.append("sourcePrototypeLayoutUuid != '' and ");
-		sb.append("uuid_ != sourcePrototypeLayoutUuid");
+		try {
+			verifyUuid("AssetEntry");
+			verifyUuid("JournalArticle");
 
-		runSQL(sb.toString());
+			StringBundler sb = new StringBundler(4);
+
+			sb.append("update Layout set uuid_ = sourcePrototypeLayoutUuid where ");
+			sb.append("sourcePrototypeLayoutUuid is not null and ");
+			sb.append("sourcePrototypeLayoutUuid != '' and ");
+			sb.append("uuid_ != sourcePrototypeLayoutUuid");
+
+			runSQL(sb.toString());
+		}
+		finally {
+			_log.info("Removing Index IX_FEDFFFED from table AssetEntry");
+			runSQL("alter table AssetEntry drop index IX_FEDFFFED;");
+			_log.info("Removing Index IX_FEFEFFED from table JournalArticle");
+			runSQL("alter table JournalArticle drop index IX_FEFEFFED;");
+			_log.info("Removing Index IX_FEFDFFED from table Layout");
+			runSQL("alter table Layout drop index IX_FEFDFFED;");
+		}
 	}
 
 	protected void verifyUuid(String tableName) throws Exception {
@@ -75,4 +102,5 @@ public class VerifyLayout extends VerifyProcess {
 		runSQL(sb.toString());
 	}
 
+	private static Log _log = LogFactoryUtil.getLog(VerifyLayout.class);
 }

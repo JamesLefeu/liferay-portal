@@ -168,7 +168,10 @@
 			<finder-column name="version" />
 			<finder-column name="status" />
 		</finder>
-
+		<finder name="LayoutUuid" return-type="Collection">
+			<finder-column name="layoutUuid" />
+		</finder>
+		
 		<!-- References -->
 
 		<reference package-path="com.liferay.mail" entity="Mail" />

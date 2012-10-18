@@ -51,6 +51,7 @@ import javax.portlet.PortletPreferences;
 /**
  * @author Alexander Chow
  * @author Shinn Lok
+ * @author James Lefeu
  */
 public class VerifyJournal extends VerifyProcess {
 
@@ -182,12 +183,22 @@ public class VerifyJournal extends VerifyProcess {
 
 		Set<String> portletIds = new HashSet<String>();
 
-		for (JournalContentSearch contentSearch : contentSearches) {
-			portletIds.add(contentSearch.getPortletId());
-		}
+		_log.info("Adding Index IX_FEEFFFED to table PortletPreferences");
+		runSQL(
+			"alter table PortletPreferences"
+			+ " add index IX_FEEFFFED (portletId);");
+		try {
+			for (JournalContentSearch contentSearch : contentSearches) {
+				portletIds.add(contentSearch.getPortletId());
+			}
 
-		for (String portletId : portletIds) {
-			verifyContentSearch(portletId);
+			for (String portletId : portletIds) {
+				verifyContentSearch(portletId);
+			}
+		}
+		finally {
+			_log.info("Removing Index IX_FEEFFFED from table PortletPreferences");
+			runSQL("alter table PortletPreferences drop index IX_FEEFFFED;");
 		}
 	}
 

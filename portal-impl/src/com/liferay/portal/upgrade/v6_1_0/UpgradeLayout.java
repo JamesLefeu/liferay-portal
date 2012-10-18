@@ -16,6 +16,8 @@ package com.liferay.portal.upgrade.v6_1_0;
 
 import com.liferay.portal.kernel.dao.jdbc.DataAccess;
 import com.liferay.portal.kernel.language.LanguageUtil;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.upgrade.UpgradeProcess;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.LocalizationUtil;
@@ -33,6 +35,7 @@ import java.util.Locale;
 /**
  * @author Jorge Ferrer
  * @author Julio Camarero
+ * @author James Lefeu
  */
 public class UpgradeLayout extends UpgradeProcess {
 
@@ -42,6 +45,8 @@ public class UpgradeLayout extends UpgradeProcess {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 
+		_log.info("Adding Index IX_FEFFFFED to table Layout");
+		runSQL("alter table Layout add index IX_FEFFFFED (plid);");
 		try {
 			con = DataAccess.getUpgradeOptimizedConnection();
 
@@ -61,6 +66,8 @@ public class UpgradeLayout extends UpgradeProcess {
 		}
 		finally {
 			DataAccess.cleanUp(con, ps, rs);
+			_log.info("Removing Index IX_FEFFFFED from table Layout");
+			runSQL("alter table Layout drop index IX_FEFFFFED;");
 		}
 	}
 
@@ -276,4 +283,5 @@ public class UpgradeLayout extends UpgradeProcess {
 		}
 	}
 
+	private static Log _log = LogFactoryUtil.getLog(UpgradeLayout.class);
 }

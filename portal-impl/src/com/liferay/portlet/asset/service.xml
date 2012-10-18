@@ -78,6 +78,9 @@
 			<finder-column name="name" />
 			<finder-column name="vocabularyId" />
 		</finder>
+		<finder name="LayoutUuid" return-type="Collection">
+			<finder-column name="layoutUuid" />
+		</finder>		
 	</entity>
 	<entity name="AssetCategoryProperty" local-service="true" remote-service="true">
 

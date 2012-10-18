@@ -560,6 +560,9 @@
 			<finder-column name="privateLayout" />
 			<finder-column name="sourcePrototypeLayoutUuid" />
 		</finder>
+		<finder name="SourcePrototypeLayoutUuid" return-type="Layout">
+			<finder-column name="sourcePrototypeLayoutUuid" />
+		</finder>		
 
 		<!-- References -->
 
@@ -612,6 +615,9 @@
 			<finder-column name="plid" />
 			<finder-column name="master" />
 		</finder>
+		<finder name="Plid" return-type="Collection">
+			<finder-column name="plid" />
+		</finder>		
 	</entity>
 	<entity name="LayoutPrototype" uuid="true" local-service="true" remote-service="true">
 
@@ -1409,6 +1415,13 @@
 			<finder-column name="plid" />
 			<finder-column name="portletId" />
 		</finder>
+		<finder name="PortletPreferencesId" return-type="Collection">
+			<finder-column name="portletPreferencesId" />
+		</finder>
+		<finder name="portletId" return-type="Collection">
+			<finder-column name="portletId" />
+		</finder>
+		
 	</entity>
 	<entity name="Quartz" local-service="true" remote-service="false" />
 	<entity name="Region" local-service="false" remote-service="true">
