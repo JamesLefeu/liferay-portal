@@ -25,6 +25,7 @@ import com.liferay.portal.kernel.util.CharPool;
 import com.liferay.portal.kernel.util.ClearThreadLocalUtil;
 import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.IndexUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.PropertiesUtil;
 import com.liferay.portal.kernel.util.StringBundler;
@@ -107,6 +108,7 @@ import org.dom4j.DocumentException;
  * @author Raymond Augé
  * @author Prashant Dighe
  * @author Shuyang Zhou
+ * @author James Lefeu
  */
 public class ServiceBuilder {
 
@@ -3267,49 +3269,26 @@ public class ServiceBuilder {
 				EntityFinder finder = finderList.get(j);
 
 				if (finder.isDBIndex()) {
-					StringBundler sb = new StringBundler();
-
-					sb.append(entity.getTable() + " (");
 
 					List<EntityColumn> finderColsList = finder.getColumns();
 
+					List<String> columns = new ArrayList<String>();
 					for (int k = 0; k < finderColsList.size(); k++) {
 						EntityColumn col = finderColsList.get(k);
 
-						sb.append(col.getDBName());
+						columns.add(col.getDBName());
 
-						if ((k + 1) != finderColsList.size()) {
-							sb.append(", ");
-						}
 					}
 
-					sb.append(");");
+					List<String> sql = IndexUtil.createSQLIndex(entity.getTable(), columns, finder.isUnique());
 
-					String indexSpec = sb.toString();
-
-					String indexHash = StringUtil.toHexString(
-						indexSpec.hashCode()).toUpperCase();
-
-					String indexName = "IX_" + indexHash;
-
-					sb.setIndex(0);
-
-					sb.append("create ");
-
-					if (finder.isUnique()) {
-						sb.append("unique ");
-					}
-
-					sb.append("index " + indexName + " on ");
-					sb.append(indexSpec);
-
-					indexSQLs.put(indexSpec, sb.toString());
+					indexSQLs.put(sql.get(IndexUtil.INDEX_SPEC), sql.get(IndexUtil.FULL_STRING));
 
 					String finderName =
 						entity.getTable() + StringPool.PERIOD +
 							finder.getName();
 
-					indexProps.put(finderName, indexName);
+					indexProps.put(finderName, sql.get(IndexUtil.INDEX_NAME));
 				}
 			}
 		}
