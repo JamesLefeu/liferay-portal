@@ -18,6 +18,7 @@ import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -51,6 +52,54 @@ public class IndexMetadataFactoryUtil {
 
 		return new IndexMetadata(
 			indexName, tableName, unique, specification, sql);
+	}
+
+	public static IndexMetadata createIndexString(
+		String tableName, String columnName) {
+
+		List<String> columnNames = new ArrayList<String>();
+		columnNames.add(columnName);
+		return createIndexString(tableName, columnNames);
+	}
+
+	public static IndexMetadata createIndexString(
+		String tableName, List<String> columnNames) {
+
+		String specification = getSpecification(tableName, columnNames);
+
+		String indexName = getIndexName(specification);
+
+		String columnNamesString = StringUtil.merge(columnNames, ", ");
+
+		StringBundler sb = new StringBundler(9);
+
+		sb.append("alter table ");
+		sb.append(tableName);
+		sb.append(" add index ");
+		sb.append(indexName);
+		sb.append(StringPool.SPACE);
+		sb.append(StringPool.OPEN_PARENTHESIS);
+		sb.append(columnNamesString);
+		sb.append(StringPool.CLOSE_PARENTHESIS);
+		sb.append(StringPool.SEMICOLON);
+
+		String sql = sb.toString();
+
+		return new IndexMetadata(
+			indexName, tableName, false, specification, sql);
+	}
+
+	public static String dropIndexString(String tableName, String indexName) {
+
+		StringBundler sb = new StringBundler(5);
+
+		sb.append("alter table ");
+		sb.append(tableName);
+		sb.append(" drop index ");
+		sb.append(indexName);
+		sb.append(StringPool.SEMICOLON);
+
+		return sb.toString();
 	}
 
 	protected static String getIndexName(String specification) {
