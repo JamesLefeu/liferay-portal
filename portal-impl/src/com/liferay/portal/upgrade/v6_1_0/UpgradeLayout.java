@@ -14,6 +14,8 @@
 
 package com.liferay.portal.upgrade.v6_1_0;
 
+import com.liferay.portal.kernel.dao.db.IndexMetadata;
+import com.liferay.portal.kernel.dao.db.IndexMetadataFactoryUtil;
 import com.liferay.portal.kernel.dao.jdbc.DataAccess;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.upgrade.UpgradeProcess;
@@ -33,6 +35,7 @@ import java.util.Locale;
 /**
  * @author Jorge Ferrer
  * @author Julio Camarero
+ * @author James Lefeu
  */
 public class UpgradeLayout extends UpgradeProcess {
 
@@ -42,6 +45,9 @@ public class UpgradeLayout extends UpgradeProcess {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 
+		IndexMetadata im = IndexMetadataFactoryUtil.createIndexString(
+			"Layout", "plid");
+		runSQL(im.getSQL());
 		try {
 			con = DataAccess.getUpgradeOptimizedConnection();
 
@@ -61,6 +67,8 @@ public class UpgradeLayout extends UpgradeProcess {
 		}
 		finally {
 			DataAccess.cleanUp(con, ps, rs);
+			runSQL(IndexMetadataFactoryUtil.dropIndexString(
+				"Layout", im.getIndexName()));
 		}
 	}
 

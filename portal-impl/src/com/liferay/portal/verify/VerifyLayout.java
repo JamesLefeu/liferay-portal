@@ -14,6 +14,8 @@
 
 package com.liferay.portal.verify;
 
+import com.liferay.portal.kernel.dao.db.IndexMetadata;
+import com.liferay.portal.kernel.dao.db.IndexMetadataFactoryUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.model.Layout;
@@ -24,6 +26,7 @@ import java.util.List;
 /**
  * @author Brian Wing Shun Chan
  * @author Kenneth Chang
+ * @author James Lefeu
  */
 public class VerifyLayout extends VerifyProcess {
 
@@ -46,17 +49,36 @@ public class VerifyLayout extends VerifyProcess {
 	}
 
 	protected void verifyUuid() throws Exception {
+
+		IndexMetadata aeim = IndexMetadataFactoryUtil.createIndexString(
+			"AssetEntry", "layoutUuid");
+		runSQL(aeim.getSQL());
+		IndexMetadata jaim = IndexMetadataFactoryUtil.createIndexString(
+			"JournalArticle", "layoutUuid");
+		runSQL(jaim.getSQL());
+		IndexMetadata lim = IndexMetadataFactoryUtil.createIndexString(
+			"Layout", "sourcePrototypeLayoutUuid");
+		runSQL(lim.getSQL());
 		verifyUuid("AssetEntry");
 		verifyUuid("JournalArticle");
+		try {
+			StringBundler sb = new StringBundler(4);
 
-		StringBundler sb = new StringBundler(4);
+			sb.append("update Layout set uuid_ = sourcePrototypeLayoutUuid where ");
+			sb.append("sourcePrototypeLayoutUuid is not null and ");
+			sb.append("sourcePrototypeLayoutUuid != '' and ");
+			sb.append("uuid_ != sourcePrototypeLayoutUuid");
 
-		sb.append("update Layout set uuid_ = sourcePrototypeLayoutUuid where ");
-		sb.append("sourcePrototypeLayoutUuid is not null and ");
-		sb.append("sourcePrototypeLayoutUuid != '' and ");
-		sb.append("uuid_ != sourcePrototypeLayoutUuid");
-
-		runSQL(sb.toString());
+			runSQL(sb.toString());
+		}
+		finally {
+			runSQL(IndexMetadataFactoryUtil.dropIndexString(
+				"AssetEntry", aeim.getIndexName()));
+			runSQL(IndexMetadataFactoryUtil.dropIndexString(
+				"JournalArticle", jaim.getIndexName()));
+			runSQL(IndexMetadataFactoryUtil.dropIndexString(
+				"Layout", lim.getIndexName()));
+		}
 	}
 
 	protected void verifyUuid(String tableName) throws Exception {

@@ -16,6 +16,8 @@ package com.liferay.portal.verify;
 
 import com.liferay.portal.kernel.dao.db.DB;
 import com.liferay.portal.kernel.dao.db.DBFactoryUtil;
+import com.liferay.portal.kernel.dao.db.IndexMetadata;
+import com.liferay.portal.kernel.dao.db.IndexMetadataFactoryUtil;
 import com.liferay.portal.kernel.dao.jdbc.DataAccess;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -51,6 +53,7 @@ import javax.portlet.PortletPreferences;
 /**
  * @author Alexander Chow
  * @author Shinn Lok
+ * @author James Lefeu
  */
 public class VerifyJournal extends VerifyProcess {
 
@@ -182,12 +185,21 @@ public class VerifyJournal extends VerifyProcess {
 
 		Set<String> portletIds = new HashSet<String>();
 
-		for (JournalContentSearch contentSearch : contentSearches) {
-			portletIds.add(contentSearch.getPortletId());
-		}
+		IndexMetadata im = IndexMetadataFactoryUtil.createIndexString(
+			"PortletPreferences", "portletId");
+		runSQL(im.getSQL());
+		try {
+			for (JournalContentSearch contentSearch : contentSearches) {
+				portletIds.add(contentSearch.getPortletId());
+			}
 
-		for (String portletId : portletIds) {
-			verifyContentSearch(portletId);
+			for (String portletId : portletIds) {
+				verifyContentSearch(portletId);
+			}
+		}
+		finally {
+			runSQL(IndexMetadataFactoryUtil.dropIndexString(
+				"PortletPreferences", im.getIndexName()));
 		}
 	}
 
