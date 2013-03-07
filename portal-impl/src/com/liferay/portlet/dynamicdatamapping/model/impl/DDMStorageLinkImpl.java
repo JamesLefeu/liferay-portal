@@ -14,6 +14,8 @@
 
 package com.liferay.portlet.dynamicdatamapping.model.impl;
 
+import java.util.Date;
+
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
@@ -35,6 +37,90 @@ public class DDMStorageLinkImpl extends DDMStorageLinkBaseImpl {
 
 	public DDMStructure getStructure() throws PortalException, SystemException {
 		return DDMStructureLocalServiceUtil.getStructure(getStructureId());
+	}
+
+	
+	public long getGroupId() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	
+	public void setGroupId(long groupId) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	
+	public long getCompanyId() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	
+	public Date getCreateDate() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	
+	public Date getModifiedDate() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	
+	public long getUserId() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	
+	public String getUserName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	
+	public String getUserUuid() throws SystemException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	
+	public void setCompanyId(long companyId) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	
+	public void setCreateDate(Date date) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	
+	public void setModifiedDate(Date date) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	
+	public void setUserId(long userId) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	
+	public void setUserName(String userName) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	
+	public void setUserUuid(String userUuid) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

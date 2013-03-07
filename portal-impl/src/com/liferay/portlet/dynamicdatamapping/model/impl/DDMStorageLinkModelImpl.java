@@ -15,6 +15,7 @@
 package com.liferay.portlet.dynamicdatamapping.model.impl;
 
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.kernel.util.StringBundler;
@@ -34,6 +35,7 @@ import java.io.Serializable;
 
 import java.sql.Types;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -450,4 +452,88 @@ public class DDMStorageLinkModelImpl extends BaseModelImpl<DDMStorageLink>
 	private boolean _setOriginalStructureId;
 	private long _columnBitmask;
 	private DDMStorageLink _escapedModel;
+
+	
+	public long getGroupId() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	
+	public void setGroupId(long groupId) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	
+	public long getCompanyId() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	
+	public Date getCreateDate() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	
+	public Date getModifiedDate() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	
+	public long getUserId() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	
+	public String getUserName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	
+	public String getUserUuid() throws SystemException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	
+	public void setCompanyId(long companyId) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	
+	public void setCreateDate(Date date) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	
+	public void setModifiedDate(Date date) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	
+	public void setUserId(long userId) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	
+	public void setUserName(String userName) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	
+	public void setUserUuid(String userUuid) {
+		// TODO Auto-generated method stub
+		
+	}
 }

@@ -14,6 +14,8 @@
 
 package com.liferay.portlet.dynamicdatalists.model.impl;
 
+import java.util.Date;
+
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portlet.dynamicdatalists.model.DDLRecord;
@@ -35,6 +37,24 @@ public class DDLRecordVersionImpl extends DDLRecordVersionBaseImpl {
 
 	public DDLRecordSet getRecordSet() throws PortalException, SystemException {
 		return DDLRecordSetLocalServiceUtil.getRecordSet(getRecordSetId());
+	}
+
+	
+	public String getUuid() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	
+	public Date getModifiedDate() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	
+	public void setModifiedDate(Date date) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

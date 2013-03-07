@@ -839,4 +839,22 @@ public class DDLRecordVersionModelImpl extends BaseModelImpl<DDLRecordVersion>
 	private Date _statusDate;
 	private long _columnBitmask;
 	private DDLRecordVersion _escapedModel;
+
+	
+	public String getUuid() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	
+	public Date getModifiedDate() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	
+	public void setModifiedDate(Date date) {
+		// TODO Auto-generated method stub
+		
+	}
 }

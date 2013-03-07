@@ -21,17 +21,25 @@ import com.liferay.portal.kernel.lar.StagedModelPathUtil;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.xml.Element;
 import com.liferay.portal.service.ServiceContext;
+import com.liferay.portlet.dynamicdatalists.model.DDLRecord;
 import com.liferay.portlet.dynamicdatalists.model.DDLRecordSet;
+import com.liferay.portlet.dynamicdatalists.model.DDLRecordVersion;
 import com.liferay.portlet.dynamicdatalists.service.DDLRecordSetLocalServiceUtil;
 import com.liferay.portlet.dynamicdatalists.service.persistence.DDLRecordSetUtil;
+import com.liferay.portlet.dynamicdatalists.service.persistence.DDLRecordVersionUtil;
+import com.liferay.portlet.dynamicdatamapping.model.DDMContent;
+import com.liferay.portlet.dynamicdatamapping.model.DDMStorageLink;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
 import com.liferay.portlet.dynamicdatamapping.model.DDMTemplate;
+import com.liferay.portlet.dynamicdatamapping.service.persistence.DDMContentUtil;
+import com.liferay.portlet.dynamicdatamapping.service.persistence.DDMStorageLinkUtil;
 
 import java.util.List;
 import java.util.Map;
 
 /**
  * @author Brian Wing Shun Chan
+ * @author James Lefeu
  */
 public class DDLRecordSetStagedModelDataHandler
 	extends BaseStagedModelDataHandler<DDLRecordSet> {
@@ -72,6 +80,62 @@ public class DDLRecordSetStagedModelDataHandler
 			StagedModelDataHandlerUtil.exportStagedModel(
 				portletDataContext, ddmTemplatesElement, ddmTemplate);
 		}
+
+		Element recordsElement = recordSetElement.addElement(
+				"records");
+
+		List<DDLRecord> ddlRecords = recordSet.getRecords();
+		for (DDLRecord ddlRecord : ddlRecords) {
+			Element recordElement = recordsElement.addElement(
+					"record");
+
+			Element ddlRecordElement = recordElement.addElement(
+					"ddl-record");
+
+			portletDataContext.addClassedModel(
+					ddlRecordElement, StagedModelPathUtil.getPath(ddlRecord), ddlRecord,
+					DDLPortletDataHandler.NAMESPACE);
+
+			/* Do we want to export all versions or just the latest/current version? 
+			 * Or, do we want the user to have this as an option to choose?
+			 */
+			Element ddlRecordVersionElement = recordElement.addElement(
+					"ddl-recordVersion");
+
+			DDLRecordVersion ddlRecordVersion = DDLRecordVersionUtil.fetchByR_V(
+					ddlRecord.getRecordId(), ddlRecord.getVersion());
+
+			portletDataContext.addClassedModel(
+					ddlRecordVersionElement, 
+					StagedModelPathUtil.getPath(ddlRecordVersion), 
+					ddlRecordVersion,
+					DDLPortletDataHandler.NAMESPACE);
+
+			Element ddmStorageLinkElement = recordElement.addElement(
+					"ddm-storageLink");
+
+			DDMStorageLink ddmStorageLink = DDMStorageLinkUtil.fetchByClassPK(
+					ddlRecordVersion.getDDMStorageId());
+
+			portletDataContext.addClassedModel(
+					ddmStorageLinkElement, 
+					StagedModelPathUtil.getPath(ddmStorageLink), 
+					ddmStorageLink,
+					DDLPortletDataHandler.NAMESPACE);
+
+			Element ddmContentElement = recordElement.addElement(
+					"ddm-content");
+
+			DDMContent ddmContent = DDMContentUtil.fetchByPrimaryKey(
+					ddlRecordVersion.getDDMStorageId());
+
+			portletDataContext.addClassedModel(
+					ddmContentElement, 
+					StagedModelPathUtil.getPath(ddmContent), 
+					ddmContent,
+					DDLPortletDataHandler.NAMESPACE);
+		}
+
 	}
 
 	@Override
@@ -90,6 +154,12 @@ public class DDLRecordSetStagedModelDataHandler
 
 		if (ddmTemplatesElement != null) {
 			importDDMTemplates(portletDataContext, ddmTemplatesElement);
+		}
+		
+		Element recordsElement = element.element("records");
+		
+		if (recordsElement != null) {
+			importRecords(portletDataContext, recordsElement);
 		}
 
 		long userId = portletDataContext.getUserId(recordSet.getUserUuid());
@@ -152,6 +222,38 @@ public class DDLRecordSetStagedModelDataHandler
 		for (Element ddmStructureElement : ddmStructureElements) {
 			StagedModelDataHandlerUtil.importStagedModel(
 				portletDataContext, ddmStructureElement);
+		}
+	}
+	
+	protected void importRecords(
+			PortletDataContext portletDataContext,
+			Element records)
+		throws Exception {
+
+		List<Element> recordElements =
+				records.elements("record");
+
+		for (Element recordElement : recordElements) {
+			
+			Element ddlRecordElement = recordElement.element("ddl-record");
+			
+			StagedModelDataHandlerUtil.importStagedModel(
+				portletDataContext, ddlRecordElement);
+			
+			Element ddlRecordVersionElement = recordElement.element("ddl-recordVersion");
+			
+			StagedModelDataHandlerUtil.importStagedModel(
+					portletDataContext, ddlRecordVersionElement);
+			
+			Element ddmStorageLinkElement = recordElement.element("ddm-storageLink");
+			
+			StagedModelDataHandlerUtil.importStagedModel(
+					portletDataContext, ddmStorageLinkElement);
+			
+			Element ddmContentElement = recordElement.element("ddm-content");
+			
+			StagedModelDataHandlerUtil.importStagedModel(
+					portletDataContext, ddmContentElement);
 		}
 	}
 

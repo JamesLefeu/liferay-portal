@@ -684,4 +684,19 @@ public class DDLRecordVersionWrapper implements DDLRecordVersion,
 	}
 
 	private DDLRecordVersion _ddlRecordVersion;
+
+	public String getUuid() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public Date getModifiedDate() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public void setModifiedDate(Date date) {
+		// TODO Auto-generated method stub
+		
+	}
 }
