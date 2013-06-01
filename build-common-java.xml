@@ -83,7 +83,9 @@
 		<echo file="${javac.destdir}/.touch"></echo>
 	</target>
 
-	<target name="deploy" depends="jar">
+	<target name="deploy">
+		<dependency alreadyDone="${antStart.alreadyJarred}" action="jar" />
+
 		<if>
 			<not>
 				<uptodate targetfile="${deploy.dir}/${jar.file}.jar">
@@ -93,21 +95,14 @@
 			<then>
 				<copy file="${jar.file}.jar" todir="${deploy.dir}" />
 			</then>
+			<else>
+				<echo>We are trying to deploy a file that is already deployed.</echo>
+			</else>
 		</if>
 	</target>
 
 	<target name="jar">
-		<if>
-			<or>
-				<not>
-					<isset property="antStart.alreadyCompiled"/>
-				</not>
-				<equals arg1="${antStart.alreadyCompiled}" arg2="false" />
-			</or>
-			<then>
-				<antcall target="compile" />
-			</then>
-		</if>
+		<dependency alreadyDone="${antStart.alreadyCompiled}" action="compile" />
 
 		<if>
 			<not>
@@ -148,6 +143,9 @@
 					</else>
 				</if>
 			</then>
+			<else>
+				<echo>We are trying to jar a file that is already jarred.</echo>
+			</else>
 		</if>
 	</target>
 
