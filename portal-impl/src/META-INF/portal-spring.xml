@@ -241,7 +241,6 @@
 	<bean id="com.liferay.portlet.bookmarks.service.persistence.BookmarksFolderPersistence" class="com.liferay.portlet.bookmarks.service.persistence.BookmarksFolderPersistenceImpl" parent="basePersistence" />
 	<bean id="com.liferay.portlet.bookmarks.service.persistence.BookmarksFolderFinder" class="com.liferay.portlet.bookmarks.service.persistence.BookmarksFolderFinderImpl" parent="basePersistence" />
 	<bean id="com.liferay.portlet.calendar.service.CalEventLocalService" class="com.liferay.portlet.calendar.service.impl.CalEventLocalServiceImpl" />
-	<bean id="com.liferay.portlet.calendar.service.CalEventService" class="com.liferay.portlet.calendar.service.impl.CalEventServiceImpl" />
 	<bean id="com.liferay.portlet.calendar.service.persistence.CalEventPersistence" class="com.liferay.portlet.calendar.service.persistence.CalEventPersistenceImpl" parent="basePersistence" />
 	<bean id="com.liferay.portlet.calendar.service.persistence.CalEventFinder" class="com.liferay.portlet.calendar.service.persistence.CalEventFinderImpl" parent="basePersistence" />
 	<bean id="com.liferay.portlet.documentlibrary.service.DLAppLocalService" class="com.liferay.portlet.documentlibrary.service.impl.DLAppLocalServiceImpl" />
@@ -326,12 +325,8 @@
 	<bean id="com.liferay.portlet.journal.service.persistence.JournalFolderFinder" class="com.liferay.portlet.journal.service.persistence.JournalFolderFinderImpl" parent="basePersistence" />
 	<bean id="com.liferay.portlet.journal.service.JournalStructureLocalService" class="com.liferay.portlet.journal.service.impl.JournalStructureLocalServiceImpl" />
 	<bean id="com.liferay.portlet.journal.service.JournalStructureService" class="com.liferay.portlet.journal.service.impl.JournalStructureServiceImpl" />
-	<bean id="com.liferay.portlet.journal.service.persistence.JournalStructurePersistence" class="com.liferay.portlet.journal.service.persistence.JournalStructurePersistenceImpl" parent="basePersistence" />
-	<bean id="com.liferay.portlet.journal.service.persistence.JournalStructureFinder" class="com.liferay.portlet.journal.service.persistence.JournalStructureFinderImpl" parent="basePersistence" />
 	<bean id="com.liferay.portlet.journal.service.JournalTemplateLocalService" class="com.liferay.portlet.journal.service.impl.JournalTemplateLocalServiceImpl" />
 	<bean id="com.liferay.portlet.journal.service.JournalTemplateService" class="com.liferay.portlet.journal.service.impl.JournalTemplateServiceImpl" />
-	<bean id="com.liferay.portlet.journal.service.persistence.JournalTemplatePersistence" class="com.liferay.portlet.journal.service.persistence.JournalTemplatePersistenceImpl" parent="basePersistence" />
-	<bean id="com.liferay.portlet.journal.service.persistence.JournalTemplateFinder" class="com.liferay.portlet.journal.service.persistence.JournalTemplateFinderImpl" parent="basePersistence" />
 	<bean id="com.liferay.portlet.messageboards.service.MBBanLocalService" class="com.liferay.portlet.messageboards.service.impl.MBBanLocalServiceImpl" />
 	<bean id="com.liferay.portlet.messageboards.service.MBBanService" class="com.liferay.portlet.messageboards.service.impl.MBBanServiceImpl" />
 	<bean id="com.liferay.portlet.messageboards.service.persistence.MBBanPersistence" class="com.liferay.portlet.messageboards.service.persistence.MBBanPersistenceImpl" parent="basePersistence" />

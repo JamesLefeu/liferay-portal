@@ -64,6 +64,7 @@ import com.liferay.portal.service.PortletLocalServiceUtil;
 import com.liferay.portal.service.ResourceLocalServiceUtil;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.ServiceContextThreadLocal;
+import com.liferay.portal.service.persistence.LayoutFriendlyURLUtil;
 import com.liferay.portal.service.persistence.LayoutRevisionUtil;
 import com.liferay.portal.service.persistence.LayoutUtil;
 import com.liferay.portal.util.PropsValues;
@@ -239,6 +240,10 @@ public class LayoutStagedModelDataHandler
 
 		Map<Long, Layout> newLayoutsMap =
 			(Map<Long, Layout>)portletDataContext.getNewPrimaryKeysMap(
+				Layout.class + ".layout");
+
+		Map<Long, Long> layoutPlids =
+			(Map<Long, Long>)portletDataContext.getNewPrimaryKeysMap(
 				Layout.class);
 
 		if (deleteLayout) {
@@ -311,6 +316,20 @@ public class LayoutStagedModelDataHandler
 
 			if (SitesUtil.isLayoutModifiedSinceLastMerge(existingLayout)) {
 				newLayoutsMap.put(oldLayoutId, existingLayout);
+
+				return;
+			}
+
+			LayoutFriendlyURL layoutFriendlyURL =
+				LayoutFriendlyURLUtil.fetchByG_P_F_First(
+					groupId, privateLayout, friendlyURL, null);
+
+			if ((layoutFriendlyURL != null) && (existingLayout == null)) {
+				Layout mergeFailFriendlyURLLayout = LayoutUtil.findByPrimaryKey(
+					layoutFriendlyURL.getPlid());
+
+				SitesUtil.addMergeFailFriendlyURLLayout(
+					mergeFailFriendlyURLLayout);
 
 				return;
 			}
@@ -480,9 +499,6 @@ public class LayoutStagedModelDataHandler
 
 		importedLayout.setHidden(layout.isHidden());
 		importedLayout.setFriendlyURL(friendlyURL);
-
-		importLayoutFriendlyURLs(portletDataContext, layout);
-
 		importedLayout.setIconImage(false);
 
 		if (layout.isIconImage()) {
@@ -524,6 +540,10 @@ public class LayoutStagedModelDataHandler
 		List<Layout> newLayouts = portletDataContext.getNewLayouts();
 
 		newLayouts.add(importedLayout);
+
+		layoutPlids.put(layout.getPlid(), importedLayout.getPlid());
+
+		importLayoutFriendlyURLs(portletDataContext, layout);
 
 		portletDataContext.importClassedModel(
 			layout, importedLayout, LayoutPortletDataHandler.NAMESPACE);
@@ -572,8 +592,6 @@ public class LayoutStagedModelDataHandler
 		if (article == null) {
 			return;
 		}
-
-		portletDataContext.setExportDataRootElement(layoutElement.getParent());
 
 		StagedModelDataHandlerUtil.exportStagedModel(
 			portletDataContext, article);
