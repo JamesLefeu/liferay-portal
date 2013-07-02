@@ -14,8 +14,13 @@
 
 package com.liferay.portal.tools;
 
-import com.liferay.portal.kernel.io.unsync.UnsyncByteArrayOutputStream;
-import com.liferay.portal.kernel.io.unsync.UnsyncPrintWriter;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.tools.ant.DirectoryScanner;
+
 import com.liferay.portal.kernel.util.FastDateFormatFactoryUtil;
 import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.PortalClassLoaderUtil;
@@ -23,10 +28,8 @@ import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.SystemProperties;
-import com.liferay.portal.kernel.util.UnsyncPrintWriterPool;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.ModelHintsConstants;
-import com.liferay.portal.scripting.ruby.RubyExecutor;
 import com.liferay.portal.servlet.filters.aggregate.AggregateFilter;
 import com.liferay.portal.servlet.filters.aggregate.FileAggregateContext;
 import com.liferay.portal.util.FastDateFormatFactoryImpl;
@@ -34,19 +37,11 @@ import com.liferay.portal.util.FileImpl;
 import com.liferay.portal.util.PortalImpl;
 import com.liferay.portal.util.PortalUtil;
 import com.liferay.portal.util.PropsImpl;
-
-import java.io.File;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.tools.ant.DirectoryScanner;
-
+import com.vaadin.sass.internal.ScssStylesheet;
 /**
  * @author Brian Wing Shun Chan
  * @author Raymond Augé
+ * @author James Lefeu
  */
 public class SassToCssBuilder {
 
@@ -78,7 +73,12 @@ public class SassToCssBuilder {
 				dirName = arguments.get("sass.dir." + i);
 
 				if (Validator.isNotNull(dirName)) {
-					dirNames.add(dirName);
+					if (i == 0 ) {
+						_vaadinPath = dirName;
+					}
+					else {
+						dirNames.add(dirName);
+					}
 				}
 				else {
 					break;
@@ -118,20 +118,10 @@ public class SassToCssBuilder {
 
 		_initUtil(classLoader);
 
-		_rubyScript = StringUtil.read(
-			classLoader,
-			"com/liferay/portal/servlet/filters/dynamiccss/main.rb");
 
-		_tempDir = SystemProperties.get(SystemProperties.TMP_DIR);
+		SystemProperties.get(SystemProperties.TMP_DIR);
 
 		for (String dirName : dirNames) {
-
-			// Create a new Ruby executor as a workaround for a bug with Ruby
-			// that breaks "ant build-css" when it parses too many CSS files
-
-			_rubyExecutor = new RubyExecutor();
-
-			_rubyExecutor.setExecuteInSeparateThread(false);
 
 			_parseSassDirectory(dirName);
 		}
@@ -237,37 +227,26 @@ public class SassToCssBuilder {
 	}
 
 	private void _parseSassFile(String fileName) throws Exception {
-		File file = new File(fileName);
+		File file = new File(fileName);//
 		File cacheFile = getCacheFile(fileName);
 
-		Map<String, Object> inputObjects = new HashMap<String, Object>();
+        ScssStylesheet scss = ScssStylesheet.get(fileName);
+        if(scss == null){
+            System.err.println("The scss file " + fileName
+                    + " could not be found.");
+            return;
+        }
+        
+        scss.setImportPath(_vaadinPath);
+        scss.setImportPath(_getCssThemePath(fileName));
+        
+        scss.compile();
 
-		inputObjects.put("content", _getContent(file));
-		inputObjects.put("cssRealPath", fileName);
-		inputObjects.put("cssThemePath", _getCssThemePath(fileName));
-		inputObjects.put("sassCachePath", _tempDir);
+    	FileUtil.write(cacheFile, scss.toString());
 
-		UnsyncByteArrayOutputStream unsyncByteArrayOutputStream =
-			new UnsyncByteArrayOutputStream();
-
-		UnsyncPrintWriter unsyncPrintWriter = UnsyncPrintWriterPool.borrow(
-			unsyncByteArrayOutputStream);
-
-		inputObjects.put("out", unsyncPrintWriter);
-
-		_rubyExecutor.eval(null, inputObjects, null, _rubyScript);
-
-		unsyncPrintWriter.flush();
-
-		String parsedContent = unsyncByteArrayOutputStream.toString();
-
-		FileUtil.write(cacheFile, parsedContent);
-
-		cacheFile.setLastModified(file.lastModified());
+    	cacheFile.setLastModified(file.lastModified());
 	}
 
-	private RubyExecutor _rubyExecutor;
-	private String _rubyScript;
-	private String _tempDir;
+	private static String _vaadinPath;
 
 }
