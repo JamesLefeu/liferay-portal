@@ -21,9 +21,12 @@ String redirect = ParamUtil.getString(request, "redirect");
 
 long ruleGroupInstanceId = ParamUtil.getLong(request, "ruleGroupInstanceId");
 
-MDRRuleGroupInstance ruleGroupInstance = MDRRuleGroupInstanceLocalServiceUtil.getRuleGroupInstance(ruleGroupInstanceId);
+MDRRuleGroupInstance ruleGroupInstance = MDRRuleGroupInstanceLocalServiceUtil.fetchRuleGroupInstance(ruleGroupInstanceId);
 
-MDRRuleGroup ruleGroup = ruleGroupInstance.getRuleGroup();
+MDRRuleGroup ruleGroup = null;
+if (ruleGroupInstance != null) {
+	ruleGroup = ruleGroupInstance.getRuleGroup();
+}
 
 PortletURL portletURL = renderResponse.createRenderURL();
 

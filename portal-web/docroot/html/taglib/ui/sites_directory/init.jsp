@@ -22,5 +22,5 @@
 String displayStyle = (String)request.getAttribute("liferay-ui:sites-directory:displayStyle");
 String sites = (String)request.getAttribute("liferay-ui:sites-directory:sites");
 
-Group group = GroupLocalServiceUtil.getGroup(scopeGroupId);
+Group group = GroupLocalServiceUtil.fetchGroup(scopeGroupId);
 %>

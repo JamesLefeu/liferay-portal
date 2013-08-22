@@ -17,18 +17,22 @@
 <%@ include file="/html/portlet/activities/init.jsp" %>
 
 <%
-Group group = GroupLocalServiceUtil.getGroup(scopeGroupId);
+Group group = GroupLocalServiceUtil.fetchGroup(scopeGroupId);
 
 List<SocialActivity> activities = null;
+String groupDescName = "";
 
-if (group.isOrganization()) {
-	activities = SocialActivityLocalServiceUtil.getOrganizationActivities(group.getOrganizationId(), 0, max);
-}
-else if (group.isRegularSite()) {
-	activities = SocialActivityLocalServiceUtil.getGroupActivities(group.getGroupId(), 0, max);
-}
-else if (group.isUser()) {
-	activities = SocialActivityLocalServiceUtil.getUserActivities(group.getClassPK(), 0, max);
+if (group != null) {
+	groupDescName = group.getDescriptiveName(locale);
+	if (group.isOrganization()) {
+		activities = SocialActivityLocalServiceUtil.getOrganizationActivities(group.getOrganizationId(), 0, max);
+	}
+	else if (group.isRegularSite()) {
+		activities = SocialActivityLocalServiceUtil.getGroupActivities(group.getGroupId(), 0, max);
+	}
+	else if (group.isUser()) {
+		activities = SocialActivityLocalServiceUtil.getUserActivities(group.getClassPK(), 0, max);
+	}
 }
 
 ResourceURL rssURL = liferayPortletResponse.createResourceURL();
@@ -36,11 +40,11 @@ ResourceURL rssURL = liferayPortletResponse.createResourceURL();
 rssURL.setCacheability(ResourceURL.FULL);
 rssURL.setParameter("struts_action", "/activities/rss");
 
-String feedTitle = LanguageUtil.format(pageContext, "x's-activities", HtmlUtil.escape(group.getDescriptiveName(locale)));
+String feedTitle = LanguageUtil.format(pageContext, "x's-activities", HtmlUtil.escape(groupDescName));
 
 rssURL.setParameter("feedTitle", feedTitle);
 
-String taglibFeedTitle = LanguageUtil.format(pageContext, "subscribe-to-x's-activities", HtmlUtil.escape(group.getDescriptiveName(locale)));
+String taglibFeedTitle = LanguageUtil.format(pageContext, "subscribe-to-x's-activities", HtmlUtil.escape(groupDescName));
 %>
 
 <liferay-ui:social-activities

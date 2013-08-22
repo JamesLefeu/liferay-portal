@@ -29,21 +29,17 @@ Layout selLayout = null;
 String layoutBreadcrumb = StringPool.BLANK;
 
 if (Validator.isNotNull(layoutUuid)) {
-	try {
-		selLayout = LayoutLocalServiceUtil.getLayoutByUuidAndGroupId(layoutUuid, themeDisplay.getSiteGroupId(), false);
+	selLayout = LayoutLocalServiceUtil.fetchLayoutByUuidAndGroupId(layoutUuid, themeDisplay.getSiteGroupId(), false);
 
+	if (selLayout != null)
 		layoutBreadcrumb = _getLayoutBreadcrumb(selLayout, locale);
-	}
-	catch (NoSuchLayoutException nsle) {
 	}
 
 	if (selLayout == null) {
-		try {
-			selLayout = LayoutLocalServiceUtil.getLayoutByUuidAndGroupId(layoutUuid, themeDisplay.getSiteGroupId(), true);
+		selLayout = LayoutLocalServiceUtil.fetchLayoutByUuidAndGroupId(layoutUuid, themeDisplay.getSiteGroupId(), true);
 
+		if (selLayout != null) {
 			layoutBreadcrumb = _getLayoutBreadcrumb(selLayout, locale);
-		}
-		catch (NoSuchLayoutException nsle) {
 		}
 	}
 }
@@ -563,14 +559,17 @@ Group parentGroup = themeDisplay.getSiteGroup();
 	<%
 	Layout defaultDisplayLayout = null;
 
-	try {
-		defaultDisplayLayout = LayoutLocalServiceUtil.getLayoutByUuidAndGroupId(layoutUuid, scopeGroupId, false);
-	}
-	catch (NoSuchLayoutException nsle) {
-		defaultDisplayLayout = LayoutLocalServiceUtil.getLayoutByUuidAndGroupId(layoutUuid, scopeGroupId, true);
+	defaultDisplayLayout = LayoutLocalServiceUtil.fetchLayoutByUuidAndGroupId(layoutUuid, scopeGroupId, false);
+
+	if (defaultDisplayLayout == null) {
+		defaultDisplayLayout = LayoutLocalServiceUtil.fetchLayoutByUuidAndGroupId(layoutUuid, scopeGroupId, true);
 	}
 
-	defaultDisplayLayout = defaultDisplayLayout.toEscapedModel();
+	String defDispLayoutName = "";
+	if (defaultDisplayLayout != null) {
+		defaultDisplayLayout = defaultDisplayLayout.toEscapedModel();
+		defDispLayoutName = defaultDisplayLayout.getName(locale);
+	}
 
 	AssetRendererFactory assetRendererFactory = AssetRendererFactoryRegistryUtil.getAssetRendererFactoryByClassName(JournalArticle.class.getName());
 
@@ -580,7 +579,7 @@ Group parentGroup = themeDisplay.getSiteGroup();
 	%>
 
 	<c:if test="<%= Validator.isNotNull(urlViewInContext) %>">
-		<a href="<%= urlViewInContext %>" target="blank"><%= LanguageUtil.format(pageContext, "view-content-in-x", defaultDisplayLayout.getName(locale)) %></a>
+		<a href="<%= urlViewInContext %>" target="blank"><%= LanguageUtil.format(pageContext, "view-content-in-x", defDispLayoutName) %></a>
 	</c:if>
 </c:if>
 

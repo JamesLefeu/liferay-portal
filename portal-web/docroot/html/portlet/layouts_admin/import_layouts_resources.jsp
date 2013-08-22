@@ -22,7 +22,7 @@ long groupId = ParamUtil.getLong(request, "groupId");
 Group group = null;
 
 if (groupId > 0) {
-	group = GroupLocalServiceUtil.getGroup(groupId);
+	group = GroupLocalServiceUtil.fetchGroup(groupId);
 }
 else {
 	group = (Group)request.getAttribute(WebKeys.GROUP);
@@ -30,8 +30,13 @@ else {
 
 Group liveGroup = group;
 
-if (group.isStagingGroup()) {
+if (group != null && group.isStagingGroup()) {
 	liveGroup = group.getLiveGroup();
+}
+
+long liveGroupId = 0;
+if (liveGroup != null) {
+	liveGroupId = liveGroup.getGroupId();
 }
 
 boolean privateLayout = ParamUtil.getBoolean(request, "privateLayout");
@@ -172,7 +177,7 @@ ManifestSummary manifestSummary = ExportImportHelperUtil.getManifestSummary(user
 				</dl>
 			</aui:fieldset>
 
-			<c:if test="<%= !group.isLayoutPrototype() %>">
+			<c:if test="<%= group != null && !group.isLayoutPrototype() %>">
 				<aui:fieldset cssClass="options-group" label="pages">
 					<span class="selected-labels" id="<portlet:namespace />selectedPages"></span>
 
@@ -223,7 +228,7 @@ ManifestSummary manifestSummary = ExportImportHelperUtil.getManifestSummary(user
 
 						<aui:input id="chooseApplications" label="choose-applications" name="<%= PortletDataHandlerKeys.PORTLET_CONFIGURATION_ALL %>" type="radio" value="<%= false %>" />
 
-						<c:if test="<%= !group.isLayoutPrototype() %>">
+						<c:if test="<%= group != null && !group.isLayoutPrototype() %>">
 							<ul class="hide options portlet-list select-options" id="<portlet:namespace />selectApplications">
 								<aui:input name="<%= PortletDataHandlerKeys.PORTLET_CONFIGURATION %>" type="hidden" value="<%= true %>" />
 
@@ -512,7 +517,7 @@ ManifestSummary manifestSummary = ExportImportHelperUtil.getManifestSummary(user
 					<portlet:param name="struts_action" value="/layouts_admin/import_layouts" />
 					<portlet:param name="<%= Constants.CMD %>" value="<%= Constants.VALIDATE %>" />
 					<portlet:param name="groupId" value="<%= String.valueOf(groupId) %>" />
-					<portlet:param name="liveGroupId" value="<%= String.valueOf(liveGroup.getGroupId()) %>" />
+					<portlet:param name="liveGroupId" value="<%= String.valueOf(liveGroupId) %>" />
 					<portlet:param name="privateLayout" value="<%= String.valueOf(privateLayout) %>" />
 				</portlet:renderURL>
 

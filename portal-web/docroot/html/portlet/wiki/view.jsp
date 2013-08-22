@@ -117,7 +117,7 @@ if (Validator.isNotNull(ParamUtil.getString(request, "title"))) {
 }
 
 if (wikiPage != null) {
-	AssetEntry layoutAssetEntry = AssetEntryLocalServiceUtil.getEntry(WikiPage.class.getName(), wikiPage.getResourcePrimKey());
+	AssetEntry layoutAssetEntry = AssetEntryLocalServiceUtil.fetchEntry(WikiPage.class.getName(), wikiPage.getResourcePrimKey());
 
 	request.setAttribute(WebKeys.LAYOUT_ASSET_ENTRY, layoutAssetEntry);
 }
@@ -326,15 +326,21 @@ long portletDisplayDDMTemplateId = PortletDisplayTemplateUtil.getPortletDisplayT
 				<div class="stats">
 
 					<%
-					AssetEntry assetEntry = AssetEntryLocalServiceUtil.getEntry(WikiPage.class.getName(), wikiPage.getResourcePrimKey());
+					AssetEntry assetEntry = AssetEntryLocalServiceUtil.fetchEntry(WikiPage.class.getName(), wikiPage.getResourcePrimKey());
+					int assetEntryViewCount = -1;
+					long assetEntryId = -1;
+					if (assetEntry != null) {
+						assetEntryViewCount = assetEntry.getViewCount();
+						assetEntryId = assetEntry.getEntryId();
+					}
 					%>
 
 					<c:choose>
-						<c:when test="<%= assetEntry.getViewCount() == 1 %>">
-							<%= assetEntry.getViewCount() %> <liferay-ui:message key="view" />
+						<c:when test="<%= assetEntryViewCount == 1 %>">
+							<%= assetEntryViewCount %> <liferay-ui:message key="view" />
 						</c:when>
-						<c:when test="<%= assetEntry.getViewCount() > 1 %>">
-							<%= assetEntry.getViewCount() %> <liferay-ui:message key="views" />
+						<c:when test="<%= assetEntryViewCount > 1 %>">
+							<%= assetEntryViewCount %> <liferay-ui:message key="views" />
 						</c:when>
 					</c:choose>
 				</div>
@@ -343,7 +349,7 @@ long portletDisplayDDMTemplateId = PortletDisplayTemplateUtil.getPortletDisplayT
 			<c:if test="<%= enableRelatedAssets %>">
 				<div class="entry-links">
 					<liferay-ui:asset-links
-						assetEntryId="<%= assetEntry.getEntryId() %>"
+						assetEntryId="<%= assetEntryId %>"
 					/>
 				</div>
 			</c:if>

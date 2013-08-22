@@ -64,10 +64,12 @@ List<Group> groups = (List<Group>)request.getAttribute("user.groups");
 			List<UserGroupRole> userGroupRoles = UserGroupRoleLocalServiceUtil.getUserGroupRoles(selUser.getUserId(), group.getGroupId());
 
 			for (UserGroupRole userGroupRole : userGroupRoles) {
-				Role role = RoleLocalServiceUtil.getRole(userGroupRole.getRoleId());
+				Role role = RoleLocalServiceUtil.fetchRole(userGroupRole.getRoleId());
 
-				buffer.append(HtmlUtil.escape(role.getTitle(locale)));
-				buffer.append(StringPool.COMMA_AND_SPACE);
+				if (role != null) {
+					buffer.append(HtmlUtil.escape(role.getTitle(locale)));
+					buffer.append(StringPool.COMMA_AND_SPACE);
+				}
 			}
 
 			if (!userGroupRoles.isEmpty()) {

@@ -50,9 +50,11 @@ if (toFileEntryId > 0) {
 
 		toGroupId = toFolder.getRepositoryId();
 
-		toGroup = GroupLocalServiceUtil.getGroup(toGroupId);
+		toGroup = GroupLocalServiceUtil.fetchGroup(toGroupId);
 
-		toGroup = toGroup.toEscapedModel();
+		if (toGroup != null) {
+			toGroup = toGroup.toEscapedModel();
+		}
 	}
 	catch (Exception e) {
 	}

@@ -20,7 +20,7 @@
 AssetRendererFactory assetRendererFactory = (AssetRendererFactory)request.getAttribute(WebKeys.ASSET_RENDERER_FACTORY);
 
 JournalArticle article = (JournalArticle)request.getAttribute(WebKeys.JOURNAL_ARTICLE);
-JournalArticleResource articleResource = JournalArticleResourceLocalServiceUtil.getArticleResource(article.getResourcePrimKey());
+JournalArticleResource articleResource = JournalArticleResourceLocalServiceUtil.fetchArticleResource(article.getResourcePrimKey());
 
 String templateId = (String)request.getAttribute(WebKeys.JOURNAL_TEMPLATE_ID);
 String languageId = LanguageUtil.getLanguageId(request);
@@ -31,7 +31,7 @@ boolean workflowAssetPreview = ParamUtil.getBoolean(request, "workflowAssetPrevi
 
 JournalArticleDisplay articleDisplay = null;
 
-if (!workflowAssetPreview && article.isApproved()) {
+if (articleResource != null && !workflowAssetPreview && article.isApproved()) {
 	String xmlRequest = PortletRequestUtil.toXML(renderRequest, renderResponse);
 
 	articleDisplay = JournalContentUtil.getDisplay(articleResource.getGroupId(), articleResource.getArticleId(), article.getVersion(), templateId, viewMode, languageId, themeDisplay, articlePage, xmlRequest);

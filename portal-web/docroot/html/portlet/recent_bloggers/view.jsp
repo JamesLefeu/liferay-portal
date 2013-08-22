@@ -57,14 +57,18 @@ else {
 			BlogsStatsUser statsUser = (BlogsStatsUser)statsUsers.get(i);
 
 			try {
-				Group group = GroupLocalServiceUtil.getGroup(statsUser.getGroupId());
+				Group group = GroupLocalServiceUtil.fetchGroup(statsUser.getGroupId());
+				long groupId = -1;
+				if (group != null) {
+					groupId = group.getGroupId();
+				}
 				User user2 = UserLocalServiceUtil.getUserById(statsUser.getUserId());
 
 				Date now = new Date();
 
-				int entryCount = BlogsEntryLocalServiceUtil.getGroupUserEntriesCount(group.getGroupId(), user2.getUserId(), now, WorkflowConstants.STATUS_APPROVED);
+				int entryCount = BlogsEntryLocalServiceUtil.getGroupUserEntriesCount(groupId, user2.getUserId(), now, WorkflowConstants.STATUS_APPROVED);
 
-				List entries = BlogsEntryLocalServiceUtil.getGroupUserEntries(group.getGroupId(), user2.getUserId(), now, WorkflowConstants.STATUS_APPROVED, 0, 1);
+				List entries = BlogsEntryLocalServiceUtil.getGroupUserEntries(groupId, user2.getUserId(), now, WorkflowConstants.STATUS_APPROVED, 0, 1);
 
 				if (entries.size() == 1) {
 					BlogsEntry entry = (BlogsEntry)entries.get(0);

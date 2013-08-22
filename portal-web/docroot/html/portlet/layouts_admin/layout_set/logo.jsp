@@ -75,10 +75,10 @@ LayoutSet selLayoutSet = ((LayoutSet)request.getAttribute("edit_pages.jsp-selLay
 	</c:if>
 
 	<%
-	Group guestGroup = GroupLocalServiceUtil.getGroup(company.getCompanyId(), GroupConstants.GUEST);
+	Group guestGroup = GroupLocalServiceUtil.fetchGroup(company.getCompanyId(), GroupConstants.GUEST);
 	%>
 
-	<c:if test="<%= liveGroup.getGroupId() != guestGroup.getGroupId() %>">
+	<c:if test="<%= guestGroup != null && liveGroup.getGroupId() != guestGroup.getGroupId() %>">
 
 		<%
 		boolean showSiteNameSupported = GetterUtil.getBoolean(selLayoutSet.getTheme().getSetting("show-site-name-supported"), true);

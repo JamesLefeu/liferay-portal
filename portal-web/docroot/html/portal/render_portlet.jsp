@@ -321,13 +321,13 @@ else {
 
 long previousSiteGroupId = themeDisplay.getSiteGroupId();
 
-Group siteGroup = GroupLocalServiceUtil.getGroup(themeDisplay.getSiteGroupId());
+Group siteGroup = GroupLocalServiceUtil.fetchGroup(themeDisplay.getSiteGroupId());
 
-if (siteGroup.isStagingGroup()) {
+if (siteGroup != null && siteGroup.isStagingGroup()) {
 	siteGroup = siteGroup.getLiveGroup();
 }
 
-if (siteGroup.isStaged() && !siteGroup.isStagedRemotely() && !siteGroup.isStagedPortlet(portletId)) {
+if (siteGroup != null && siteGroup.isStaged() && !siteGroup.isStagedRemotely() && !siteGroup.isStagedPortlet(portletId)) {
 	themeDisplay.setParentGroupId(siteGroup.getGroupId());
 }
 

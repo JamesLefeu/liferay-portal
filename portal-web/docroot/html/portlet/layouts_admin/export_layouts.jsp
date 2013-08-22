@@ -22,7 +22,7 @@ long groupId = ParamUtil.getLong(request, "groupId");
 Group group = null;
 
 if (groupId > 0) {
-	group = GroupLocalServiceUtil.getGroup(groupId);
+	group = GroupLocalServiceUtil.fetchGroup(groupId);
 }
 else {
 	group = (Group)request.getAttribute(WebKeys.GROUP);
@@ -30,7 +30,7 @@ else {
 
 Group liveGroup = group;
 
-if (group.isStagingGroup()) {
+if (group != null && group.isStagingGroup()) {
 	liveGroup = group.getLiveGroup();
 }
 
@@ -63,10 +63,9 @@ long[] selectedLayoutIds = GetterUtil.getLongValues(StringUtil.split(SessionTree
 List<Layout> selectedLayouts = new ArrayList<Layout>();
 
 for (int i = 0; i < selectedLayoutIds.length; i++) {
-	try {
-		selectedLayouts.add(LayoutLocalServiceUtil.getLayout(groupId, privateLayout, selectedLayoutIds[i]));
-	}
-	catch (NoSuchLayoutException nsle) {
+	Layout layout = LayoutLocalServiceUtil.fetchLayout(groupId, privateLayout, selectedLayoutIds[i]);
+	if (layout != null) {
+		selectedLayouts.add(layout);
 	}
 }
 
@@ -118,7 +117,7 @@ portletURL.setParameter("rootNodeName", rootNodeName);
 
 					<aui:input name="layoutIds" type="hidden" />
 
-					<c:if test="<%= !group.isLayoutPrototype() %>">
+					<c:if test="<%= group != null && !group.isLayoutPrototype() %>">
 						<aui:fieldset cssClass="options-group" label="pages">
 							<span class="selected-labels" id="<portlet:namespace />selectedPages"></span>
 
@@ -177,7 +176,7 @@ portletURL.setParameter("rootNodeName", rootNodeName);
 
 									<aui:input helpMessage="choose-applications-export-help" id="chooseApplications" label="choose-applications" name="<%= PortletDataHandlerKeys.PORTLET_CONFIGURATION_ALL %>" type="radio" value="<%= false %>" />
 
-									<c:if test="<%= !group.isLayoutPrototype() %>">
+									<c:if test="<%= group != null && !group.isLayoutPrototype() %>">
 										<ul class="hide options portlet-list select-options" id="<portlet:namespace />selectApplications">
 											<aui:input name="<%= PortletDataHandlerKeys.PORTLET_CONFIGURATION %>" type="hidden" value="<%= true %>" />
 

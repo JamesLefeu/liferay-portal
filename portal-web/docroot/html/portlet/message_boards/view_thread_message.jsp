@@ -44,9 +44,12 @@ MBThread thread = (MBThread)request.getAttribute("edit_message.jsp-thread");
 					>
 
 						<%
-						MBStatsUser statsUser = MBStatsUserLocalServiceUtil.getStatsUser(scopeGroupId, message.getUserId());
+						MBStatsUser statsUser = MBStatsUserLocalServiceUtil.fetchStatsUser(scopeGroupId, message.getUserId());
 
-						int posts = statsUser.getMessageCount();
+						int posts = -1;
+						if (statsUser != null) {
+							posts = statsUser.getMessageCount();
+						}
 						String[] ranks = MBUtil.getUserRank(portletPreferences, themeDisplay.getLanguageId(), statsUser);
 						%>
 
@@ -171,10 +174,7 @@ MBThread thread = (MBThread)request.getAttribute("edit_message.jsp-thread");
 					<%
 					MBMessage parentMessage = null;
 
-					try {
-						parentMessage = MBMessageLocalServiceUtil.getMessage(message.getParentMessageId());
-					}
-					catch (Exception e) {}
+					parentMessage = MBMessageLocalServiceUtil.fetchMessage(message.getParentMessageId());
 					%>
 
 					<c:if test="<%= parentMessage != null %>">
@@ -199,7 +199,7 @@ MBThread thread = (MBThread)request.getAttribute("edit_message.jsp-thread");
 					boolean hasReplyPermission = MBCategoryPermission.contains(permissionChecker, scopeGroupId, message.getCategoryId(), ActionKeys.REPLY_TO_MESSAGE);
 
 					if (!message.isRoot()) {
-						MBMessage rootMessage = MBMessageLocalServiceUtil.getMessage(thread.getRootMessageId());
+						MBMessage rootMessage = MBMessageLocalServiceUtil.fetchMessage(thread.getRootMessageId());
 
 						showAnswerFlag = MBMessagePermission.contains(permissionChecker, rootMessage, ActionKeys.UPDATE) && !message.isAnswer() && (thread.isQuestion() || MBThreadLocalServiceUtil.hasAnswerMessage(thread.getThreadId()));
 					}

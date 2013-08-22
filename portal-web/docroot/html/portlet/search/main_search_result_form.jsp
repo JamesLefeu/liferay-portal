@@ -45,7 +45,11 @@ if (assetRendererFactory != null) {
 		classPK = resourcePrimKey;
 	}
 
-	AssetEntry assetEntry = AssetEntryLocalServiceUtil.getEntry(className, classPK);
+	AssetEntry assetEntry = AssetEntryLocalServiceUtil.fetchEntry(className, classPK);
+	long assetEntryId = -1;
+	if (assetEntry != null) {
+		assetEntryId = assetEntry.getEntryId();
+	}
 
 	assetRenderer = assetRendererFactory.getAssetRenderer(classPK);
 
@@ -59,7 +63,7 @@ if (assetRendererFactory != null) {
 		viewFullContentURL.setParameter("returnToFullPageURL", returnToFullPageURL);
 	}
 
-	viewFullContentURL.setParameter("assetEntryId", String.valueOf(assetEntry.getEntryId()));
+	viewFullContentURL.setParameter("assetEntryId", String.valueOf(assetEntryId));
 	viewFullContentURL.setParameter("type", assetRendererFactory.getType());
 
 	if (Validator.isNotNull(assetRenderer.getUrlTitle())) {
@@ -191,11 +195,7 @@ PortletURL portletURL = (PortletURL)request.getAttribute("search.jsp-portletURL"
 
 						AssetCategory assetCategory = null;
 
-						try {
-							assetCategory = AssetCategoryLocalServiceUtil.getCategory(assetCategoryId);
-						}
-						catch (NoSuchCategoryException nsce) {
-						}
+						assetCategory = AssetCategoryLocalServiceUtil.fetchCategory(assetCategoryId);
 
 						if (assetCategory == null) {
 							continue;

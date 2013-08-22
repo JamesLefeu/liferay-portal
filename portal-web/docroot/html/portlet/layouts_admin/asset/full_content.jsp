@@ -21,16 +21,24 @@ LayoutRevision layoutRevision = (LayoutRevision)request.getAttribute(WebKeys.LAY
 
 LayoutBranch layoutBranch = layoutRevision.getLayoutBranch();
 
-LayoutSetBranch layoutSetBranch = LayoutSetBranchLocalServiceUtil.getLayoutSetBranch(layoutRevision.getLayoutSetBranchId());
+LayoutSetBranch layoutSetBranch = LayoutSetBranchLocalServiceUtil.fetchLayoutSetBranch(layoutRevision.getLayoutSetBranchId());
+String layoutSetBranchName = "";
+if (layoutSetBranch != null) {
+	layoutSetBranchName = layoutSetBranch.getName();
+}
 
-Layout targetLayout = LayoutLocalServiceUtil.getLayout(layoutRevision.getPlid());
-
-String layoutFriendlyURL = PortalUtil.getLayoutFriendlyURL(targetLayout, themeDisplay);
+Layout targetLayout = LayoutLocalServiceUtil.fetchLayout(layoutRevision.getPlid());
+String targetLayoutHTMLTitle = "";
+String layoutFriendlyURL = "";
+if (targetLayout != null) {
+	targetLayoutHTMLTitle = targetLayout.getHTMLTitle(locale);
+	layoutFriendlyURL = PortalUtil.getLayoutFriendlyURL(targetLayout, themeDisplay);
+}
 %>
 
-<strong><liferay-ui:message key="page" />:</strong> <a href="<%= layoutFriendlyURL + "?layoutSetBranchId=" + layoutRevision.getLayoutSetBranchId() + "&layoutRevisionId=" + layoutRevision.getLayoutRevisionId() %>"><%= targetLayout.getHTMLTitle(locale) %></a><br />
+<strong><liferay-ui:message key="page" />:</strong> <a href="<%= layoutFriendlyURL + "?layoutSetBranchId=" + layoutRevision.getLayoutSetBranchId() + "&layoutRevisionId=" + layoutRevision.getLayoutRevisionId() %>"><%= targetLayoutHTMLTitle %></a><br />
 
-<strong><liferay-ui:message key="site-pages-variation" />:</strong> <%= LanguageUtil.get(locale, HtmlUtil.escape(layoutSetBranch.getName())) %><br />
+<strong><liferay-ui:message key="site-pages-variation" />:</strong> <%= LanguageUtil.get(locale, HtmlUtil.escape(layoutSetBranchName)) %><br />
 
 <strong><liferay-ui:message key="page-variation" />:</strong> <%= LanguageUtil.get(locale, HtmlUtil.escape(layoutBranch.getName())) %><br />
 

@@ -72,14 +72,18 @@ String selectStyle = (String)request.getAttribute("configuration.jsp-selectStyle
 
 							<%
 							for (long classNameId : availableClassNameIdsSet) {
-								ClassName className = ClassNameLocalServiceUtil.getClassName(classNameId);
+								ClassName className = ClassNameLocalServiceUtil.fetchClassName(classNameId);
+								String classNameValue = "";
+								if (className != null) {
+									classNameValue = className.getValue();
+								}
 
 								if (Arrays.binarySearch(classNameIds, classNameId) < 0) {
-									typesRightList.add(new KeyValuePair(String.valueOf(classNameId), ResourceActionsUtil.getModelResource(locale, className.getValue())));
+									typesRightList.add(new KeyValuePair(String.valueOf(classNameId), ResourceActionsUtil.getModelResource(locale, classNameValue)));
 								}
 							%>
 
-								<aui:option label="<%= ResourceActionsUtil.getModelResource(locale, className.getValue()) %>" selected="<%= (classNameIds.length == 1) && (classNameId == classNameIds[0]) %>" value="<%= classNameId %>" />
+								<aui:option label="<%= ResourceActionsUtil.getModelResource(locale, classNameValue) %>" selected="<%= (classNameIds.length == 1) && (classNameId == classNameIds[0]) %>" value="<%= classNameId %>" />
 
 							<%
 							}
@@ -756,9 +760,9 @@ private long[] _getCategorizableGroupIds(long[] groupIds) throws Exception {
 	Set<Long> categorizableGroupIds = new HashSet<Long>(groupIds.length);
 
 	for (long groupId : groupIds) {
-		Group group = GroupLocalServiceUtil.getGroup(groupId);
+		Group group = GroupLocalServiceUtil.fetchGroup(groupId);
 
-		if (group.isLayout()) {
+		if (group != null && group.isLayout()) {
 			groupId = group.getParentGroupId();
 		}
 

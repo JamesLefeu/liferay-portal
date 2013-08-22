@@ -37,9 +37,11 @@ List<Role> defaultSiteRoles = new ArrayList();
 long[] defaultSiteRoleIds = StringUtil.split(groupTypeSettings.getProperty("defaultSiteRoleIds"), 0L);
 
 for (long defaultSiteRoleId : defaultSiteRoleIds) {
-	Role role = RoleLocalServiceUtil.getRole(defaultSiteRoleId);
+	Role role = RoleLocalServiceUtil.fetchRole(defaultSiteRoleId);
 
-	defaultSiteRoles.add(role);
+	if (role != null) {
+		defaultSiteRoles.add(role);
+	}
 }
 
 List<Team> defaultTeams = new ArrayList();
@@ -47,9 +49,11 @@ List<Team> defaultTeams = new ArrayList();
 long[] defaultTeamIds = StringUtil.split(groupTypeSettings.getProperty("defaultTeamIds"), 0L);
 
 for (long defaultTeamId : defaultTeamIds) {
-	Team team = TeamLocalServiceUtil.getTeam(defaultTeamId);
+	Team team = TeamLocalServiceUtil.fetchTeam(defaultTeamId);
 
-	defaultTeams.add(team);
+	if (team != null) {
+		defaultTeams.add(team);
+	}
 }
 %>
 

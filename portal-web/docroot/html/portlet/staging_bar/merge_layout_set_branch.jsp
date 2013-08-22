@@ -23,7 +23,7 @@ List<LayoutSetBranch> layoutSetBranches = LayoutSetBranchLocalServiceUtil.getLay
 
 long layoutSetBranchId = ParamUtil.getLong(request, "layoutSetBranchId");
 
-LayoutSetBranch layoutSetBranch = LayoutSetBranchLocalServiceUtil.getLayoutSetBranch(layoutSetBranchId);
+LayoutSetBranch layoutSetBranch = LayoutSetBranchLocalServiceUtil.fetchLayoutSetBranch(layoutSetBranchId);
 
 if (layoutSetBranches.contains(layoutSetBranch)) {
 	layoutSetBranches = ListUtil.copy(layoutSetBranches);

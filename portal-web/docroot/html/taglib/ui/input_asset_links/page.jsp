@@ -34,16 +34,18 @@ if (Validator.isNull(assetLinksSearchContainerPrimaryKeys) && SessionErrors.isEm
 		AssetEntry assetLinkEntry = null;
 
 		if ((assetEntryId > 0) || (assetLink.getEntryId1() == assetEntryId)) {
-			assetLinkEntry = AssetEntryLocalServiceUtil.getEntry(assetLink.getEntryId2());
+			assetLinkEntry = AssetEntryLocalServiceUtil.fetchEntry(assetLink.getEntryId2());
 		}
 		else {
-			assetLinkEntry = AssetEntryLocalServiceUtil.getEntry(assetLink.getEntryId1());
+			assetLinkEntry = AssetEntryLocalServiceUtil.fetchEntry(assetLink.getEntryId1());
 		}
 
-		AssetRendererFactory assetRendererFactory = AssetRendererFactoryRegistryUtil.getAssetRendererFactoryByClassName(assetLinkEntry.getClassName());
+		if (assetLinkEntry != null) {
+			AssetRendererFactory assetRendererFactory = AssetRendererFactoryRegistryUtil.getAssetRendererFactoryByClassName(assetLinkEntry.getClassName());
 
-		if (assetRendererFactory.isActive(company.getCompanyId())) {
-			assetLinks.add(assetLink);
+			if (assetRendererFactory.isActive(company.getCompanyId())) {
+				assetLinks.add(assetLink);
+			}
 		}
 	}
 }
@@ -149,17 +151,32 @@ assetBrowserURL.setWindowState(LiferayWindowState.POP_UP);
 		AssetEntry assetLinkEntry = null;
 
 		if ((assetEntryId > 0) || (assetLink.getEntryId1() == assetEntryId)) {
-			assetLinkEntry = AssetEntryLocalServiceUtil.getEntry(assetLink.getEntryId2());
+			assetLinkEntry = AssetEntryLocalServiceUtil.fetchEntry(assetLink.getEntryId2());
 		}
 		else {
-			assetLinkEntry = AssetEntryLocalServiceUtil.getEntry(assetLink.getEntryId1());
+			assetLinkEntry = AssetEntryLocalServiceUtil.fetchEntry(assetLink.getEntryId1());
 		}
 
-		assetLinkEntry = assetLinkEntry.toEscapedModel();
+		String assetEntryTitle = "";
+		long assetEntryId = -1;
 
-		AssetRendererFactory assetRendererFactory = assetLinkEntry.getAssetRendererFactory();
+		AssetRendererFactory assetRendererFactory = null;
+		Group assetLinkEntryGroup = null;
+		String assetLinkEntryGroupName = "";
 
-		Group assetLinkEntryGroup = GroupLocalServiceUtil.getGroup(assetLinkEntry.getGroupId());
+		if (assetLinkEntry != null) {
+			assetEntryTitle = assetLinkEntry.getTitle(locale);
+			assetEntryId = -assetLinkEntry.getEntryId();
+
+			assetLinkEntry = assetLinkEntry.toEscapedModel();
+
+			assetRendererFactory = assetLinkEntry.getAssetRendererFactory();
+
+			assetLinkEntryGroup = GroupLocalServiceUtil.fetchGroup(assetLinkEntry.getGroupId());
+			if (assetLinkEntryGroup != null) {
+				assetLinkEntryGroupName = assetLinkEntryGroup.getDescriptiveName(locale);
+			}
+		}
 		%>
 
 		<liferay-ui:search-container-column-text
@@ -169,16 +186,16 @@ assetBrowserURL.setWindowState(LiferayWindowState.POP_UP);
 
 		<liferay-ui:search-container-column-text
 			name="title"
-			value="<%= assetLinkEntry.getTitle(locale) %>"
+			value="<%= assetEntryTitle %>"
 		/>
 
 		<liferay-ui:search-container-column-text
 			name="scope"
-			value="<%= HtmlUtil.escape(assetLinkEntryGroup.getDescriptiveName(locale)) %>"
+			value="<%= HtmlUtil.escape(assetLinkEntryGroupName) %>"
 		/>
 
 		<liferay-ui:search-container-column-text>
-			<a class="modify-link" data-rowId="<%= assetLinkEntry.getEntryId() %>" href="javascript:;"><%= removeLinkIcon %></a>
+			<a class="modify-link" data-rowId="<%= assetEntryId %>" href="javascript:;"><%= removeLinkIcon %></a>
 		</liferay-ui:search-container-column-text>
 	</liferay-ui:search-container-row>
 

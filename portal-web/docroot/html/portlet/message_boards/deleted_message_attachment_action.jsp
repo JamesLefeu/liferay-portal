@@ -28,18 +28,22 @@ MBMessage message = MBMessageAttachmentsUtil.getMessage(fileEntry.getFileEntryId
 	<c:if test="<%= MBCategoryPermission.contains(permissionChecker, scopeGroupId, message.getCategoryId(), ActionKeys.ADD_FILE) %>">
 
 		<%
-		TrashEntry trashEntry = TrashEntryLocalServiceUtil.getEntry(DLFileEntry.class.getName(), fileEntry.getFileEntryId());
+		TrashEntry trashEntry = TrashEntryLocalServiceUtil.fetchEntry(DLFileEntry.class.getName(), fileEntry.getFileEntryId());
+		long entryId = -1;
+		if (trashEntry != null) {
+			entryId = trashEntry.getEntryId();
+		}
 		%>
 
 		<portlet:actionURL var="restoreEntryURL">
 			<portlet:param name="struts_action" value="/message_boards/restore_message_attachment" />
 			<portlet:param name="<%= Constants.CMD %>" value="<%= Constants.RESTORE %>" />
 			<portlet:param name="redirect" value="<%= currentURL %>" />
-			<portlet:param name="trashEntryId" value="<%= String.valueOf(trashEntry.getEntryId()) %>" />
+			<portlet:param name="trashEntryId" value="<%= String.valueOf(entryId) %>" />
 		</portlet:actionURL>
 
 		<%
-		String taglibOnClick = "Liferay.fire('" + renderResponse.getNamespace() + "checkEntry', {trashEntryId: " + trashEntry.getEntryId() + ", uri: '" + restoreEntryURL.toString() + "'});";
+		String taglibOnClick = "Liferay.fire('" + renderResponse.getNamespace() + "checkEntry', {trashEntryId: " + entryId + ", uri: '" + restoreEntryURL.toString() + "'});";
 		%>
 
 		<liferay-ui:icon

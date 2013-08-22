@@ -44,13 +44,21 @@ String modelName = (String)request.getAttribute("liferay-ui:input-permissions:mo
 	<c:when test="<%= modelName != null %>">
 
 		<%
-		Group siteGroup = GroupLocalServiceUtil.getGroup(themeDisplay.getSiteGroupId());
+		Group siteGroup = GroupLocalServiceUtil.fetchGroup(themeDisplay.getSiteGroupId());
+		long siteGroupId = -1;
+		if (siteGroup != null) {
+			siteGroupId = siteGroup.getGroupId();
+		}
 
-		Role defaultGroupRole = RoleLocalServiceUtil.getDefaultGroupRole(siteGroup.getGroupId());
+		Role defaultGroupRole = RoleLocalServiceUtil.getDefaultGroupRole(siteGroupId);
 
-		boolean hasViewDefaultGroupRolePermission = RolePermissionUtil.contains(themeDisplay.getPermissionChecker(), siteGroup.getGroupId(), defaultGroupRole.getRoleId(), ActionKeys.VIEW);
+		boolean hasViewDefaultGroupRolePermission = RolePermissionUtil.contains(themeDisplay.getPermissionChecker(), siteGroupId, defaultGroupRole.getRoleId(), ActionKeys.VIEW);
 
-		Role guestRole = RoleLocalServiceUtil.getRole(themeDisplay.getCompanyId(), RoleConstants.GUEST);
+		Role guestRole = RoleLocalServiceUtil.fetchRole(themeDisplay.getCompanyId(), RoleConstants.GUEST);
+		String guestRoleTitle = "";
+		if (guestRole != null) {
+			guestRoleTitle = guestRole.getTitle(themeDisplay.getLocale());
+		}
 
 		String[] roleNames = new String[] {RoleConstants.GUEST};
 
@@ -91,7 +99,7 @@ String modelName = (String)request.getAttribute("liferay-ui:input-permissions:mo
 			<select id="<%= uniqueNamespace %>inputPermissionsViewRole" name="<%= namespace %>inputPermissionsViewRole" onChange="<%= uniqueNamespace + "updatePermissionsView();" %>">
 
 				<%
-				String guestRoleLabel = LanguageUtil.format(pageContext, "x-role", guestRole.getTitle(themeDisplay.getLocale()));
+				String guestRoleLabel = LanguageUtil.format(pageContext, "x-role", guestRoleTitle);
 
 				if (PropsValues.PERMISSIONS_CHECK_GUEST_ENABLED) {
 					guestRoleLabel = LanguageUtil.get(pageContext, "anyone") + StringPool.SPACE + StringPool.OPEN_PARENTHESIS + guestRoleLabel + StringPool.CLOSE_PARENTHESIS;
@@ -152,12 +160,16 @@ String modelName = (String)request.getAttribute("liferay-ui:input-permissions:mo
 
 		<%
 		for (String roleName : roleNames) {
-			Role role = RoleLocalServiceUtil.getRole(themeDisplay.getCompanyId(), roleName);
+			Role role = RoleLocalServiceUtil.fetchRole(themeDisplay.getCompanyId(), roleName);
+			String roleTitle = "";
+			if (role != null) {
+				roleTitle = role.getTitle(themeDisplay.getLocale());
+			}
 		%>
 
 			<tr>
 				<td>
-					<%= role.getTitle(themeDisplay.getLocale()) %>
+					<%= roleTitle %>
 				</td>
 
 				<%
@@ -205,9 +217,9 @@ String modelName = (String)request.getAttribute("liferay-ui:input-permissions:mo
 				%>
 
 					<td style="text-align: center;" <%= (action.equals(ActionKeys.VIEW)) ? "class=\"hide-accessible\"" : "" %>>
-						<label class="hidden-label" for="<%= checkboxFieldId %>"><liferay-ui:message arguments="<%= new Object[] {ResourceActionsUtil.getAction(pageContext, action), role.getTitle(themeDisplay.getLocale())} %>" key="give-x-permission-to-users-with-role-x" /></label>
+						<label class="hidden-label" for="<%= checkboxFieldId %>"><liferay-ui:message arguments="<%= new Object[] {ResourceActionsUtil.getAction(pageContext, action), roleTitle} %>" key="give-x-permission-to-users-with-role-x" /></label>
 
-						<input <%= checked ? "checked" : "" %> <%= disabled ? "disabled" : "" %> id="<%= checkboxFieldId %>" name="<%= checkboxFieldName %>" title='<%= LanguageUtil.format(pageContext, "give-x-permission-to-users-with-role-x", new Object[] {ResourceActionsUtil.getAction(pageContext, action), role.getTitle(themeDisplay.getLocale())}) %>' type="checkbox" value="<%= action %>" />
+						<input <%= checked ? "checked" : "" %> <%= disabled ? "disabled" : "" %> id="<%= checkboxFieldId %>" name="<%= checkboxFieldName %>" title='<%= LanguageUtil.format(pageContext, "give-x-permission-to-users-with-role-x", new Object[] {ResourceActionsUtil.getAction(pageContext, action), roleTitle}) %>' type="checkbox" value="<%= action %>" />
 					</td>
 
 				<%

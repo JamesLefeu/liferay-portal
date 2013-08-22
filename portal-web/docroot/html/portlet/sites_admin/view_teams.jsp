@@ -27,7 +27,7 @@ long groupId = group.getGroupId();
 Organization organization = null;
 
 if (group.isOrganization()) {
-	organization = OrganizationLocalServiceUtil.getOrganization(group.getOrganizationId());
+	organization = OrganizationLocalServiceUtil.fetchOrganization(group.getOrganizationId());
 }
 
 PortletURL portletURL = renderResponse.createRenderURL();

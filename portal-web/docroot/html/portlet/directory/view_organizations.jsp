@@ -68,7 +68,7 @@ if (parentOrganizationId > 0) {
 
 			organizationParams.put("excludedOrganizationIds", excludedOrganizationIds);
 
-			Organization parentOrganization = OrganizationLocalServiceUtil.getOrganization(parentOrganizationId);
+			Organization parentOrganization = OrganizationLocalServiceUtil.fetchOrganization(parentOrganizationId);
 
 			List<Organization> organizations = new ArrayList<Organization>();
 

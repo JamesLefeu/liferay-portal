@@ -79,7 +79,7 @@ if (fileEntry != null) {
 DLFileEntryType dlFileEntryType = null;
 
 if (fileEntryTypeId > 0) {
-	dlFileEntryType = DLFileEntryTypeLocalServiceUtil.getFileEntryType(fileEntryTypeId);
+	dlFileEntryType = DLFileEntryTypeLocalServiceUtil.fetchFileEntryType(fileEntryTypeId);
 }
 
 long assetClassPK = 0;
@@ -374,19 +374,20 @@ editFileEntryURL.setParameter("workflowAction", String.valueOf(WorkflowConstants
 
 				<%
 				if (fileEntryTypeId > 0) {
-					try {
-						List<DDMStructure> ddmStructures = dlFileEntryType.getDDMStructures();
+					List<DDMStructure> ddmStructures = null;
+					if (dlFileEntryType != null) {
+						ddmStructures = dlFileEntryType.getDDMStructures();
+					}
 
+					if (ddmStructures != null) {
 						for (DDMStructure ddmStructure : ddmStructures) {
 							Fields fields = null;
 
-							try {
-								DLFileEntryMetadata fileEntryMetadata = DLFileEntryMetadataLocalServiceUtil.getFileEntryMetadata(ddmStructure.getStructureId(), fileVersionId);
+								DLFileEntryMetadata fileEntryMetadata = DLFileEntryMetadataLocalServiceUtil.fetchFileEntryMetadata(ddmStructure.getStructureId(), fileVersionId);
 
-								fields = StorageEngineUtil.getFields(fileEntryMetadata.getDDMStorageId());
-							}
-							catch (Exception e) {
-							}
+								if (fileEntryMetadata != null) {
+									fields = StorageEngineUtil.getFields(fileEntryMetadata.getDDMStorageId());
+								}
 				%>
 
 							<liferay-ddm:html
@@ -399,9 +400,6 @@ editFileEntryURL.setParameter("workflowAction", String.valueOf(WorkflowConstants
 
 				<%
 						}
-					}
-					catch (Exception e) {
-						_log.error(e, e);
 					}
 				}
 				%>

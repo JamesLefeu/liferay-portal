@@ -47,7 +47,7 @@ long entryId = BeanParamUtil.getLong(entry, request, "entryId");
 
 displayStyle = BlogsUtil.DISPLAY_STYLE_FULL_CONTENT;
 
-AssetEntry assetEntry = AssetEntryLocalServiceUtil.getEntry(BlogsEntry.class.getName(), entry.getEntryId());
+AssetEntry assetEntry = AssetEntryLocalServiceUtil.fetchEntry(BlogsEntry.class.getName(), entry.getEntryId());
 
 AssetEntryServiceUtil.incrementViewCounter(BlogsEntry.class.getName(), entry.getEntryId());
 

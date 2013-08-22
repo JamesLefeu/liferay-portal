@@ -22,7 +22,7 @@ int abstractLength = (Integer)request.getAttribute(WebKeys.ASSET_PUBLISHER_ABSTR
 String viewURL = (String)request.getAttribute(WebKeys.ASSET_PUBLISHER_VIEW_URL);
 
 JournalArticle article = (JournalArticle)request.getAttribute(WebKeys.JOURNAL_ARTICLE);
-JournalArticleResource articleResource = JournalArticleResourceLocalServiceUtil.getArticleResource(article.getResourcePrimKey());
+JournalArticleResource articleResource = JournalArticleResourceLocalServiceUtil.fetchArticleResource(article.getResourcePrimKey());
 
 String languageId = LanguageUtil.getLanguageId(request);
 
@@ -30,7 +30,7 @@ boolean workflowAssetPreview = GetterUtil.getBoolean((Boolean)request.getAttribu
 
 JournalArticleDisplay articleDisplay = null;
 
-if (!workflowAssetPreview && article.isApproved()) {
+if (articleResource != null && !workflowAssetPreview && article.isApproved()) {
 	String xmlRequest = PortletRequestUtil.toXML(renderRequest, renderResponse);
 
 	articleDisplay = JournalContentUtil.getDisplay(articleResource.getGroupId(), articleResource.getArticleId(), null, null, languageId, themeDisplay, 1, xmlRequest);

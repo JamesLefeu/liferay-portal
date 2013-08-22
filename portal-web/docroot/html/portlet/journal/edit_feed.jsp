@@ -33,12 +33,10 @@ DDMStructure ddmStructure = null;
 String ddmStructureName = StringPool.BLANK;
 
 if (Validator.isNotNull(structureId)) {
-	try {
-		ddmStructure = DDMStructureLocalServiceUtil.getStructure(groupId, PortalUtil.getClassNameId(JournalArticle.class), structureId, true);
+	ddmStructure = DDMStructureLocalServiceUtil.fetchStructure(groupId, PortalUtil.getClassNameId(JournalArticle.class), structureId, true);
 
+	if (ddmStructure != null) {
 		ddmStructureName = ddmStructure.getName(locale);
-	}
-	catch (NoSuchStructureException nsse) {
 	}
 }
 
@@ -54,22 +52,16 @@ String templateId = BeanParamUtil.getString(feed, request, "templateId");
 if ((ddmStructure == null) && Validator.isNotNull(templateId)) {
 	DDMTemplate ddmTemplate = null;
 
-	try {
-		ddmTemplate = DDMTemplateLocalServiceUtil.getTemplate(groupId, PortalUtil.getClassNameId(DDMStructure.class), templateId, true);
-	}
-	catch (NoSuchTemplateException nste) {
-	}
+	ddmTemplate = DDMTemplateLocalServiceUtil.fetchTemplate(groupId, PortalUtil.getClassNameId(DDMStructure.class), templateId, true);
 
 	if (ddmTemplate != null) {
-		try {
-			ddmStructure = DDMStructureLocalServiceUtil.getStructure(ddmTemplate.getClassPK());
+		ddmStructure = DDMStructureLocalServiceUtil.fetchStructure(ddmTemplate.getClassPK());
 
+		if (ddmStructure != null) {
 			structureId = ddmStructure.getStructureKey();
 			ddmStructureName = ddmStructure.getName(locale);
 
 			ddmTemplates = DDMTemplateLocalServiceUtil.getTemplates(groupId, PortalUtil.getClassNameId(DDMStructure.class), ddmTemplate.getClassPK());
-		}
-		catch (NoSuchStructureException nsse) {
 		}
 	}
 }

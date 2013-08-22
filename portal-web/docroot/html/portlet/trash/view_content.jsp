@@ -228,12 +228,18 @@
 			</div>
 
 			<%
-			AssetEntry assetEntry = AssetEntryLocalServiceUtil.getEntry(className, classPK);
+			AssetEntry assetEntry = AssetEntryLocalServiceUtil.fetchEntry(className, classPK);
+			long assetEntryId = -1;
+			long assetUserId = -1;
+			if (assetEntry != null) {
+				assetEntryId = assetEntry.getEntryId();
+				assetUserId = assetEntry.getUserId();
+			}
 			%>
 
 			<div class="asset-related-assets">
 				<liferay-ui:asset-links
-					assetEntryId="<%= assetEntry.getEntryId() %>"
+					assetEntryId="<%= assetEntryId %>"
 				/>
 			</div>
 
@@ -249,7 +255,7 @@
 						formAction="<%= discussionURL %>"
 						formName='<%= "fm" + classPK %>'
 						redirect="<%= currentURL %>"
-						userId="<%= assetEntry.getUserId() %>"
+						userId="<%= assetUserId %>"
 					/>
 				</div>
 			</c:if>

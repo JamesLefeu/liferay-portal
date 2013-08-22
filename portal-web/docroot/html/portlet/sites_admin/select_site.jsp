@@ -73,9 +73,9 @@ portletURL.setParameter("target", target);
 			excludedGroupIds.add(companyGroup.getGroupId());
 
 			if (groupId > 0) {
-				Group group = GroupLocalServiceUtil.getGroup(groupId);
+				Group group = GroupLocalServiceUtil.fetchGroup(groupId);
 
-				if (group.isStagingGroup()) {
+				if (group != null && group.isStagingGroup()) {
 					excludedGroupIds.add(group.getLiveGroupId());
 				}
 				else {
@@ -107,9 +107,11 @@ portletURL.setParameter("target", target);
 
 			if (includeUserPersonalSite) {
 				if (searchContainer.getStart() == 0) {
-					Group userPersonalSite = GroupLocalServiceUtil.getGroup(company.getCompanyId(), GroupConstants.USER_PERSONAL_SITE);
+					Group userPersonalSite = GroupLocalServiceUtil.fetchGroup(company.getCompanyId(), GroupConstants.USER_PERSONAL_SITE);
 
-					results.add(userPersonalSite);
+					if (userPersonalSite != null) {
+						results.add(userPersonalSite);
+					}
 				}
 
 				additionalSites++;

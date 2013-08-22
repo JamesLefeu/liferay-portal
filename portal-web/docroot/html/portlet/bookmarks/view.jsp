@@ -93,10 +93,12 @@ if (folder != null) {
 				String parentFolderName = LanguageUtil.get(pageContext, "home");
 
 				if (!folder.isRoot()) {
-					BookmarksFolder parentFolder = BookmarksFolderLocalServiceUtil.getBookmarksFolder(parentFolderId);
+					BookmarksFolder parentFolder = BookmarksFolderLocalServiceUtil.fetchBookmarksFolder(parentFolderId);
 
-					parentFolderId = parentFolder.getFolderId();
-					parentFolderName = parentFolder.getName();
+					if (parentFolder != null) {
+						parentFolderId = parentFolder.getFolderId();
+						parentFolderName = parentFolder.getName();
+					}
 				}
 				%>
 

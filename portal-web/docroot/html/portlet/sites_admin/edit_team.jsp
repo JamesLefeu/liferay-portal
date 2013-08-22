@@ -30,7 +30,7 @@ Group group = GroupServiceUtil.getGroup(groupId);
 Organization organization = null;
 
 if (group.isOrganization()) {
-	organization = OrganizationLocalServiceUtil.getOrganization(group.getOrganizationId());
+	organization = OrganizationLocalServiceUtil.fetchOrganization(group.getOrganizationId());
 }
 %>
 

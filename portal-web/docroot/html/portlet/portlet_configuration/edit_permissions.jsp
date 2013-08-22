@@ -63,15 +63,20 @@ if (resourceGroupId > 0) {
 	groupId = resourceGroupId;
 }
 
-Group group = GroupLocalServiceUtil.getGroup(groupId);
+Group group = GroupLocalServiceUtil.fetchGroup(groupId);
 
 Layout selLayout = null;
 
 if (modelResource.equals(Layout.class.getName())) {
-	selLayout = LayoutLocalServiceUtil.getLayout(GetterUtil.getLong(resourcePrimKey));
+	selLayout = LayoutLocalServiceUtil.fetchLayout(GetterUtil.getLong(resourcePrimKey));
 
-	group = selLayout.getGroup();
-	groupId = group.getGroupId();
+	if (selLayout != null) {
+		group = selLayout.getGroup();
+	}
+
+	if (group != null) {
+		groupId = group.getGroupId();
+	}
 }
 
 Resource resource = null;
@@ -103,7 +108,7 @@ if (Validator.isNotNull(roleTypesParam)) {
 	roleTypes = StringUtil.split(roleTypesParam, 0);
 }
 
-if (group.isCompany()) {
+if (group != null && group.isCompany()) {
 	roleTypes = new int[] {RoleConstants.TYPE_REGULAR};
 }
 
@@ -169,9 +174,9 @@ definePermissionsURL.setRefererPlid(plid);
 		if (modelResource.equals(Group.class.getName())) {
 			long modelResourceGroupId = GetterUtil.getLong(resourcePrimKey);
 
-			Group modelResourceGroup = GroupLocalServiceUtil.getGroup(modelResourceGroupId);
+			Group modelResourceGroup = GroupLocalServiceUtil.fetchGroup(modelResourceGroupId);
 
-			if (modelResourceGroup.isLayoutPrototype() || modelResourceGroup.isLayoutSetPrototype() || modelResourceGroup.isUserGroup()) {
+			if ((modelResourceGroup != null) && (modelResourceGroup.isLayoutPrototype() || modelResourceGroup.isLayoutSetPrototype() || modelResourceGroup.isUserGroup()) {
 				actions = new ArrayList<String>(actions);
 
 				actions.remove(ActionKeys.ADD_LAYOUT_BRANCH);
@@ -190,9 +195,12 @@ definePermissionsURL.setRefererPlid(plid);
 		else if (modelResource.equals(Role.class.getName())) {
 			long modelResourceRoleId = GetterUtil.getLong(resourcePrimKey);
 
-			Role modelResourceRole = RoleLocalServiceUtil.getRole(modelResourceRoleId);
+			Role modelResourceRole = RoleLocalServiceUtil.fetchRole(modelResourceRoleId);
 
-			String name = modelResourceRole.getName();
+			String name = "";
+			if (modelResourceRole != null) {
+				name = modelResourceRole.getName();
+			}
 
 			if (name.equals(RoleConstants.GUEST) || name.equals(RoleConstants.USER)) {
 				actions = new ArrayList<String>(actions);
@@ -208,26 +216,36 @@ definePermissionsURL.setRefererPlid(plid);
 
 		List<Role> roles = ResourceActionsUtil.getRoles(company.getCompanyId(), group, modelResource, roleTypes);
 
-		Role administratorRole = RoleLocalServiceUtil.getRole(company.getCompanyId(), RoleConstants.ADMINISTRATOR);
+		Role administratorRole = RoleLocalServiceUtil.fetchRole(company.getCompanyId(), RoleConstants.ADMINISTRATOR);
 
-		roles.remove(administratorRole);
+		if (administratorRole != null) {
+			roles.remove(administratorRole);
+		}
 
 		if (!ResourceActionsUtil.isPortalModelResource(modelResource)) {
-			Role organizationAdministratorRole = RoleLocalServiceUtil.getRole(company.getCompanyId(), RoleConstants.ORGANIZATION_ADMINISTRATOR);
+			Role organizationAdministratorRole = RoleLocalServiceUtil.fetchRole(company.getCompanyId(), RoleConstants.ORGANIZATION_ADMINISTRATOR);
 
-			roles.remove(organizationAdministratorRole);
+			if (organizationAdministratorRole != null) {
+				roles.remove(organizationAdministratorRole);
+			}
 
-			Role organizationOwnerRole = RoleLocalServiceUtil.getRole(company.getCompanyId(), RoleConstants.ORGANIZATION_OWNER);
+			Role organizationOwnerRole = RoleLocalServiceUtil.fetchRole(company.getCompanyId(), RoleConstants.ORGANIZATION_OWNER);
 
-			roles.remove(organizationOwnerRole);
+			if (organizationOwnerRole != null) {
+				roles.remove(organizationOwnerRole);
+			}
 
-			Role siteAdministratorRole = RoleLocalServiceUtil.getRole(company.getCompanyId(), RoleConstants.SITE_ADMINISTRATOR);
+			Role siteAdministratorRole = RoleLocalServiceUtil.fetchRole(company.getCompanyId(), RoleConstants.SITE_ADMINISTRATOR);
 
-			roles.remove(siteAdministratorRole);
+			if (siteAdministratorRole != null) {
+				roles.remove(siteAdministratorRole);
+			}
 
-			Role siteOwnerRole = RoleLocalServiceUtil.getRole(company.getCompanyId(), RoleConstants.SITE_OWNER);
+			Role siteOwnerRole = RoleLocalServiceUtil.fetchRole(company.getCompanyId(), RoleConstants.SITE_OWNER);
 
-			roles.remove(siteOwnerRole);
+			if (siteOwnerRole != null) {
+				roles.remove(siteOwnerRole);
+			}
 		}
 
 		long modelResourceRoleId = 0;
@@ -235,18 +253,22 @@ definePermissionsURL.setRefererPlid(plid);
 		if (modelResource.equals(Role.class.getName())) {
 			modelResourceRoleId = GetterUtil.getLong(resourcePrimKey);
 
-			Role role = RoleLocalServiceUtil.getRole(modelResourceRoleId);
+			Role role = RoleLocalServiceUtil.fetchRole(modelResourceRoleId);
 
-			roles.remove(role);
+			if (role != null) {
+				roles.remove(role);
+			}
 		}
 
 		List<Team> teams = null;
 
-		if (group.isOrganization() || group.isRegularSite()) {
-			teams = TeamLocalServiceUtil.getGroupTeams(groupId);
-		}
-		else if (group.isLayout()) {
-			teams = TeamLocalServiceUtil.getGroupTeams(group.getParentGroupId());
+		if (group != null) {
+			if (group.isOrganization() || group.isRegularSite()) {
+				teams = TeamLocalServiceUtil.getGroupTeams(groupId);
+			}
+			else if (group.isLayout()) {
+				teams = TeamLocalServiceUtil.getGroupTeams(group.getParentGroupId());
+			}
 		}
 
 		if (teams != null) {
@@ -273,9 +295,9 @@ definePermissionsURL.setRefererPlid(plid);
 			}
 
 			if (name.equals(RoleConstants.GUEST) && modelResource.equals(Layout.class.getName())) {
-				Layout resourceLayout = LayoutLocalServiceUtil.getLayout(GetterUtil.getLong(resourcePrimKey));
+				Layout resourceLayout = LayoutLocalServiceUtil.fetchLayout(GetterUtil.getLong(resourcePrimKey));
 
-				if (resourceLayout.isPrivateLayout()) {
+				if (resourceLayout != null && resourceLayout.isPrivateLayout()) {
 					Group resourceLayoutGroup = resourceLayout.getGroup();
 
 					if (!resourceLayoutGroup.isLayoutSetPrototype()) {
@@ -290,9 +312,9 @@ definePermissionsURL.setRefererPlid(plid);
 				if (pos > 0) {
 					long resourcePlid = GetterUtil.getLong(resourcePrimKey.substring(0, pos));
 
-					Layout resourceLayout = LayoutLocalServiceUtil.getLayout(resourcePlid);
+					Layout resourceLayout = LayoutLocalServiceUtil.fetchLayout(resourcePlid);
 
-					if (resourceLayout.isPrivateLayout()) {
+					if (resourceLayout != null && resourceLayout.isPrivateLayout()) {
 						Group resourceLayoutGroup = resourceLayout.getGroup();
 
 						if (!resourceLayoutGroup.isLayoutPrototype() && !resourceLayoutGroup.isLayoutSetPrototype()) {
@@ -425,9 +447,14 @@ definePermissionsURL.setRefererPlid(plid);
 						buffer.append(action);
 						buffer.append("\" ");
 
+						String groupDescName = "";
+						if (group != null) {
+							groupDescName = group.getDescriptiveName(locale);
+						}
+
 						if (Validator.isNotNull(preselectedMsg)) {
 							buffer.append("onclick=\"return false;\" onmouseover=\"Liferay.Portal.ToolTip.show(this, '");
-							buffer.append(UnicodeLanguageUtil.format(pageContext, preselectedMsg, new Object[] {role.getTitle(locale), ResourceActionsUtil.getAction(pageContext, action), Validator.isNull(modelResource) ? selResourceDescription : ResourceActionsUtil.getModelResource(locale, resource.getName()), HtmlUtil.escape(group.getDescriptiveName(locale))}));
+							buffer.append(UnicodeLanguageUtil.format(pageContext, preselectedMsg, new Object[] {role.getTitle(locale), ResourceActionsUtil.getAction(pageContext, action), Validator.isNull(modelResource) ? selResourceDescription : ResourceActionsUtil.getModelResource(locale, resource.getName()), HtmlUtil.escape(groupDescName)}));
 							buffer.append("'); return false;\" ");
 						}
 

@@ -23,7 +23,11 @@ MBMessage message = (MBMessage)request.getAttribute(WebKeys.MESSAGE_BOARDS_MESSA
 
 MBCategory category = message.getCategory();
 
-MBThread thread = MBThreadLocalServiceUtil.getThread(message.getThreadId());
+MBThread thread = MBThreadLocalServiceUtil.fetchThread(message.getThreadId());
+boolean threadLocked = true;
+if (thread != null) {
+	threadLocked = thread.isLocked();
+}
 
 long messageId = message.getMessageId();
 
@@ -99,7 +103,7 @@ boolean splitThread = true;
 			<aui:input fieldParam="splitThreadSubject" label="subject-of-the-new-thread" model="<%= MBMessage.class %>" name="subject" value="<%= message.getSubject() %>" />
 		</div>
 
-		<aui:input disabled="<%= thread.isLocked() %>" helpMessage='<%= thread.isLocked() ? LanguageUtil.get(pageContext, "unlock-thread-to-add-an-explanation-post") : StringPool.BLANK %>' label="add-explanation-post-to-the-source-thread" name="addExplanationPost" onClick='<%= renderResponse.getNamespace() + "toggleExplanationPost();" %>' type="checkbox" />
+		<aui:input disabled="<%= threadLocked %>" helpMessage='<%= threadLocked ? LanguageUtil.get(pageContext, "unlock-thread-to-add-an-explanation-post") : StringPool.BLANK %>' label="add-explanation-post-to-the-source-thread" name="addExplanationPost" onClick='<%= renderResponse.getNamespace() + "toggleExplanationPost();" %>' type="checkbox" />
 
 		<div id="<portlet:namespace />explanationPost" style="display: none;">
 			<div class="alert alert-info">

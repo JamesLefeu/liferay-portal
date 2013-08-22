@@ -21,9 +21,9 @@ DDLRecordSet recordSet = null;
 
 try {
 	if (Validator.isNotNull(recordSetId)) {
-		recordSet = DDLRecordSetLocalServiceUtil.getRecordSet(recordSetId);
+		recordSet = DDLRecordSetLocalServiceUtil.fetchRecordSet(recordSetId);
 
-		if (recordSet.getGroupId() != scopeGroupId) {
+		if (recordSet != null && recordSet.getGroupId() != scopeGroupId) {
 			recordSet = null;
 		}
 	}
@@ -91,7 +91,7 @@ boolean showEditDisplayTemplateIcon = (displayDDMTemplateId != 0) && DDMTemplate
 boolean showEditFormTemplateIcon = (formDDMTemplateId != 0) && DDMTemplatePermission.contains(permissionChecker, formDDMTemplateId, ActionKeys.UPDATE);
 %>
 
-<c:if test="<%= themeDisplay.isSignedIn() && !layout.isLayoutPrototypeLinkActive() && (showAddListIcon || showAddTemplateIcon || showEditDisplayTemplateIcon || showEditFormTemplateIcon || hasConfigurationPermission ) %>">
+<c:if test="<%= recordSet != null && themeDisplay.isSignedIn() && !layout.isLayoutPrototypeLinkActive() && (showAddListIcon || showAddTemplateIcon || showEditDisplayTemplateIcon || showEditFormTemplateIcon || hasConfigurationPermission ) %>">
 	<div class="lfr-meta-actions icons-container">
 		<div class="lfr-icon-actions">
 			<c:if test="<%= showAddTemplateIcon %>">

@@ -24,9 +24,11 @@ String organizationName = StringPool.BLANK;
 Organization organization = null;
 
 if (organizationId > 0) {
-	organization = OrganizationLocalServiceUtil.getOrganization(organizationId);
+	organization = OrganizationLocalServiceUtil.fetchOrganization(organizationId);
 
-	organizationName = organization.getName();
+	if (organization != null) {
+		organizationName = organization.getName();
+	}
 }
 %>
 

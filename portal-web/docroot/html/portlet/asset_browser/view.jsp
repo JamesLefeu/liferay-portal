@@ -86,7 +86,11 @@ request.setAttribute("view.jsp-portletURL", portletURL);
 					continue;
 				}
 
-				Group group = GroupLocalServiceUtil.getGroup(assetEntry.getGroupId());
+				Group group = GroupLocalServiceUtil.fetchGroup(assetEntry.getGroupId());
+				String groupDescName = "";
+				if (group != null) {
+					groupDescName = group.getDescriptiveName(locale);
+				}
 				%>
 
 				<liferay-ui:search-container-column-text
@@ -111,7 +115,7 @@ request.setAttribute("view.jsp-portletURL", portletURL);
 
 				<liferay-ui:search-container-column-text
 					name="descriptiveName"
-					value="<%= HtmlUtil.escape(group.getDescriptiveName(locale)) %>"
+					value="<%= HtmlUtil.escape(groupDescName) %>"
 				/>
 
 				<c:if test="<%= assetEntry.getEntryId() != refererAssetEntryId %>">
@@ -124,7 +128,7 @@ request.setAttribute("view.jsp-portletURL", portletURL);
 						data.put("assetclassname", assetEntry.getClassName());
 						data.put("assettype", assetRendererFactory.getTypeName(locale, true));
 						data.put("assettitle", HtmlUtil.escape(assetEntry.getTitle(locale)));
-						data.put("groupname", HtmlUtil.escape(group.getDescriptiveName(locale)));
+						data.put("groupname", HtmlUtil.escape(groupDescName));
 						%>
 
 						<aui:button cssClass="selector-button" data="<%= data %>" value="choose" />

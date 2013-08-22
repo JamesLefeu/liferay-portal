@@ -50,7 +50,7 @@ if (selLayout != null) {
 	}
 
 	if (!curFreeformLayout && !prototypeGroup) {
-		LayoutTemplate layoutTemplate = LayoutTemplateLocalServiceUtil.getLayoutTemplate(layoutTemplateId, false, themeId);
+		LayoutTemplate layoutTemplate = LayoutTemplateLocalServiceUtil.fetchLayoutTemplate(layoutTemplateId, false, themeId);
 
 		if (layoutTemplate != null) {
 			themeId = layoutTemplate.getThemeId();

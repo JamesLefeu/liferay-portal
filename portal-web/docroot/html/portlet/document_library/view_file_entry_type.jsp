@@ -53,12 +53,16 @@ portletURL.setParameter("struts_action", "/document_library/view_file_entry_type
 		/>
 
 		<%
-		Group group = GroupLocalServiceUtil.getGroup(fileEntryType.getGroupId());
+		Group group = GroupLocalServiceUtil.fetchGroup(fileEntryType.getGroupId());
+		String groupScopeLabel = "";
+		if (group != null) {
+			groupScopeLabel = group.getScopeLabel(themeDisplay);
+		}
 		%>
 
 		<liferay-ui:search-container-column-text
 			name="scope"
-			value="<%= LanguageUtil.get(pageContext, group.getScopeLabel(themeDisplay)) %>"
+			value="<%= LanguageUtil.get(pageContext, groupScopeLabel) %>"
 		/>
 
 		<liferay-ui:search-container-column-date

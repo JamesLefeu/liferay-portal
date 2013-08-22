@@ -212,7 +212,11 @@ public class BreadcrumbTag extends IncludeTag {
 			}
 		}
 		else if (group.isUser()) {
-			User groupUser = UserLocalServiceUtil.getUser(group.getClassPK());
+			User groupUser = UserLocalServiceUtil.fetchUser(group.getClassPK());
+
+			if (groupUser == null) {
+				return;
+			}
 
 			List<Organization> organizations =
 				OrganizationLocalServiceUtil.getUserOrganizations(

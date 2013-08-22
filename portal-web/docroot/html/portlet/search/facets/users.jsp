@@ -42,7 +42,11 @@ boolean showAssetCount = dataJSONObject.getBoolean("showAssetCount", true);
 
 			long curUserId = GetterUtil.getLong(termCollector.getTerm());
 
-			User curUser = UserLocalServiceUtil.getUser(curUserId);
+			User curUser = UserLocalServiceUtil.fetchUser(curUserId);
+			String curUserFullname = "";
+			if (curUser != null) {
+				curUserFullname = curUser.getFullName();
+			}
 		%>
 
 			<c:if test="<%= userId == curUserId %>">
@@ -50,7 +54,7 @@ boolean showAssetCount = dataJSONObject.getBoolean("showAssetCount", true);
 					Liferay.Search.tokenList.add(
 						{
 							clearFields: '<%= renderResponse.getNamespace() + facet.getFieldId() %>',
-							text: '<%= HtmlUtil.escapeJS(curUser.getFullName()) %>'
+							text: '<%= HtmlUtil.escapeJS(curUserFullname) %>'
 						}
 					);
 				</aui:script>
@@ -63,7 +67,7 @@ boolean showAssetCount = dataJSONObject.getBoolean("showAssetCount", true);
 			%>
 
 			<li class="facet-value <%= (userId == curUserId) ? "current-term" : StringPool.BLANK %>">
-				<a data-value="<%= curUserId %>" href="javascript:;"><%= HtmlUtil.escape(curUser.getFullName()) %></a><c:if test="<%= showAssetCount %>"> <span class="frequency">(<%= termCollector.getFrequency() %>)</span></c:if>
+				<a data-value="<%= curUserId %>" href="javascript:;"><%= HtmlUtil.escape(curUserFullname) %></a><c:if test="<%= showAssetCount %>"> <span class="frequency">(<%= termCollector.getFrequency() %>)</span></c:if>
 			</li>
 
 		<%

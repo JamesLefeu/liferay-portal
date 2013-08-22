@@ -107,14 +107,10 @@ long selPlid = ParamUtil.getLong(request, "selPlid", LayoutConstants.DEFAULT_PAR
 
 Layout selLayout = null;
 
-try {
-	selLayout = LayoutLocalServiceUtil.getLayout(selPlid);
+selLayout = LayoutLocalServiceUtil.fetchLayout(selPlid);
 
-	if (selLayout.isPrivateLayout()) {
-		tabs1 = "private-pages";
-	}
-}
-catch (NoSuchLayoutException nsle) {
+if (selLayout != null && selLayout.isPrivateLayout()) {
+	tabs1 = "private-pages";
 }
 
 boolean privateLayout = ParamUtil.getBoolean(request, "privateLayout", tabs1.equals("private-pages"));
@@ -126,10 +122,9 @@ long[] selectedLayoutIds = GetterUtil.getLongValues(StringUtil.split(SessionTree
 List<Layout> selectedLayouts = new ArrayList<Layout>();
 
 for (int i = 0; i < selectedLayoutIds.length; i++) {
-	try {
-		selectedLayouts.add(LayoutLocalServiceUtil.getLayout(selGroupId, privateLayout, selectedLayoutIds[i]));
-	}
-	catch (NoSuchLayoutException nsle) {
+	Layout layout = LayoutLocalServiceUtil.fetchLayout(selGroupId, privateLayout, selectedLayoutIds[i]);
+	if (layout != null) {
+		selectedLayouts.add();
 	}
 }
 
@@ -147,7 +142,7 @@ Organization organization = null;
 User user2 = null;
 
 if (liveGroup.isOrganization()) {
-	organization = OrganizationLocalServiceUtil.getOrganization(liveGroup.getOrganizationId());
+	organization = OrganizationLocalServiceUtil.fetchOrganization(liveGroup.getOrganizationId());
 }
 else if (liveGroup.isUser()) {
 	user2 = UserLocalServiceUtil.getUserById(liveGroup.getClassPK());
@@ -155,7 +150,7 @@ else if (liveGroup.isUser()) {
 
 String rootNodeName = liveGroup.getDescriptiveName(locale);
 
-if (liveGroup.isOrganization()) {
+if (organization != null && liveGroup.isOrganization()) {
 	rootNodeName = organization.getName();
 }
 else if (liveGroup.isUser()) {

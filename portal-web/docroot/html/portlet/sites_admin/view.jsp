@@ -56,10 +56,14 @@ String searchURLString = searchURL.toString();
 
 		long groupId = pkParser.getLong("groupId");
 
-		Group group = GroupLocalServiceUtil.getGroup(groupId);
+		Group group = GroupLocalServiceUtil.fetchGroup(groupId);
+		String groupDescName = "";
+		if (group != null) {
+			groupDescName = group.getDescriptiveName(locale);
+		}
 		%>
 
-		<liferay-ui:message arguments="<%= HtmlUtil.escape(group.getDescriptiveName(locale)) %>" key="site-x-does-not-have-any-private-pages" />
+		<liferay-ui:message arguments="<%= HtmlUtil.escape(groupDescName) %>" key="site-x-does-not-have-any-private-pages" />
 	</liferay-ui:error>
 
 	<liferay-ui:error exception="<%= RequiredGroupException.class %>">

@@ -26,7 +26,7 @@ if ((layoutRevision == null) && (layout != null)) {
 LayoutSetBranch layoutSetBranch = (LayoutSetBranch)request.getAttribute("view.jsp-layoutSetBranch");
 
 if (layoutSetBranch == null) {
-	layoutSetBranch = LayoutSetBranchLocalServiceUtil.getLayoutSetBranch(layoutRevision.getLayoutSetBranchId());
+	layoutSetBranch = LayoutSetBranchLocalServiceUtil.fetchLayoutSetBranch(layoutRevision.getLayoutSetBranchId());
 }
 
 boolean workflowEnabled = WorkflowDefinitionLinkLocalServiceUtil.hasWorkflowDefinitionLink(themeDisplay.getCompanyId(), scopeGroupId, LayoutRevision.class.getName());
@@ -38,9 +38,13 @@ if (workflowEnabled) {
 }
 
 String taglibHelpMessage = null;
+String layoutSetBranchName = "";
+if (layoutSetBranch != null) {
+	layoutSetBranchName = layoutSetBranch.getName();
+}
 
 if (layoutRevision.isHead()) {
-	taglibHelpMessage = LanguageUtil.format(pageContext, "this-version-will-be-published-when-x-is-published-to-live", HtmlUtil.escape(layoutSetBranch.getName()));
+	taglibHelpMessage = LanguageUtil.format(pageContext, "this-version-will-be-published-when-x-is-published-to-live", HtmlUtil.escape(layoutSetBranchName));
 }
 else if (hasWorkflowTask) {
 	taglibHelpMessage = "you-are-currently-reviewing-this-page.-you-can-make-changes-and-send-them-to-the-next-step-in-the-workflow-when-ready";
@@ -53,7 +57,7 @@ else {
 <div class="layout-actions">
 	<c:choose>
 		<c:when test="<%= layoutRevision.getStatus() == WorkflowConstants.STATUS_INCOMPLETE %>">
-			<liferay-ui:message arguments="<%= new Object[] {HtmlUtil.escape(layoutRevision.getName(locale)), HtmlUtil.escape(layoutSetBranch.getName())} %>" key="the-page-x-is-not-enabled-in-x,-but-is-available-in-other-pages-variations" />
+			<liferay-ui:message arguments="<%= new Object[] {HtmlUtil.escape(layoutRevision.getName(locale)), HtmlUtil.escape(layoutSetBranchName)} %>" key="the-page-x-is-not-enabled-in-x,-but-is-available-in-other-pages-variations" />
 		</c:when>
 		<c:otherwise>
 			<aui:model-context bean="<%= layoutRevision %>" model="<%= LayoutRevision.class %>" />
@@ -239,7 +243,7 @@ else {
 						String label = null;
 
 						if (layoutRevision.getStatus() == WorkflowConstants.STATUS_INCOMPLETE) {
-							label = LanguageUtil.format(pageContext, "enable-in-x", layoutSetBranch.getName());
+							label = LanguageUtil.format(pageContext, "enable-in-x", layoutSetBranchName);
 						}
 						else {
 							if (workflowEnabled) {

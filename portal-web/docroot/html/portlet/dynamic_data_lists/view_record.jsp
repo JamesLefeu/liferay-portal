@@ -25,11 +25,26 @@ long recordId = BeanParamUtil.getLong(record, request, "recordId");
 
 long recordSetId = BeanParamUtil.getLong(record, request, "recordSetId");
 
-DDLRecordSet recordSet = DDLRecordSetLocalServiceUtil.getRecordSet(recordSetId);
+DDLRecordSet recordSet = DDLRecordSetLocalServiceUtil.fetchRecordSet(recordSetId);
+
+String recordSetName = "";
+if (recordSet != null) {
+	recordSetName = recordSet.getName(locale);
+}
 
 long formDDMTemplateId = ParamUtil.getLong(request, "formDDMTemplateId");
 
-DDMStructure ddmStructure = recordSet.getDDMStructure(formDDMTemplateId);
+DDMStructure ddmStructure = null;
+if (recordSet != null) {
+	ddmStructure = recordSet.getDDMStructure(formDDMTemplateId);
+}
+
+String ddmName = "";
+long ddmPk = 0;
+if (ddmStructure != null) {
+	ddmName = ddmStructure.getName(locale);
+	ddmPk = ddmStructure.getPrimaryKey();
+}
 
 String version = ParamUtil.getString(request, "version", DDLRecordConstants.VERSION_DEFAULT);
 
@@ -40,7 +55,7 @@ DDLRecordVersion latestRecordVersion = record.getLatestRecordVersion();
 
 <liferay-ui:header
 	backURL="<%= redirect %>"
-	title='<%= LanguageUtil.format(pageContext, "view-x", ddmStructure.getName(locale)) %>'
+	title='<%= LanguageUtil.format(pageContext, "view-x", ddmName) %>'
 />
 
 <c:if test="<%= recordVersion != null %>">
@@ -61,7 +76,7 @@ DDLRecordVersion latestRecordVersion = record.getLatestRecordVersion();
 
 	<liferay-ddm:html
 		classNameId="<%= PortalUtil.getClassNameId(DDMStructure.class) %>"
-		classPK="<%= ddmStructure.getPrimaryKey() %>"
+		classPK="<%= ddmPk %>"
 		fields="<%= fields %>"
 		readOnly="<%= true %>"
 		requestedLocale="<%= locale %>"
@@ -98,6 +113,6 @@ PortletURL portletURL = renderResponse.createRenderURL();
 portletURL.setParameter("struts_action", "/dynamic_data_lists/view_record_set");
 portletURL.setParameter("recordSetId", String.valueOf(recordSetId));
 
-PortalUtil.addPortletBreadcrumbEntry(request, recordSet.getName(locale), portletURL.toString());
-PortalUtil.addPortletBreadcrumbEntry(request, LanguageUtil.format(pageContext, "view-x", ddmStructure.getName(locale)), currentURL);
+PortalUtil.addPortletBreadcrumbEntry(request, recordSetName, portletURL.toString());
+PortalUtil.addPortletBreadcrumbEntry(request, LanguageUtil.format(pageContext, "view-x", ddmName), currentURL);
 %>

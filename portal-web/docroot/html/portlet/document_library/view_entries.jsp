@@ -128,9 +128,11 @@ if (fileEntryTypeId >= 0) {
 	Indexer indexer = IndexerRegistryUtil.getIndexer(DLFileEntryConstants.getClassName());
 
 	if (fileEntryTypeId > 0) {
-		DLFileEntryType dlFileEntryType = DLFileEntryTypeLocalServiceUtil.getFileEntryType(fileEntryTypeId);
+		DLFileEntryType dlFileEntryType = DLFileEntryTypeLocalServiceUtil.fetchFileEntryType(fileEntryTypeId);
 
-		dlFileEntryTypeName = dlFileEntryType.getName(locale);
+		if (dlFileEntryType != null) {
+			dlFileEntryTypeName = dlFileEntryType.getName(locale);
+		}
 	}
 
 	SearchContext searchContext = SearchContextFactory.getInstance(request);

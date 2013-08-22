@@ -67,18 +67,16 @@ if (ddmTemplate != null) {
 }
 
 if ((ddmStructure == null) && (ddmTemplate == null) && Validator.isNotNull(templateId)) {
-	try {
-		ddmTemplate = DDMTemplateLocalServiceUtil.getTemplate(groupId, PortalUtil.getClassNameId(DDMStructure.class), templateId, true);
-	}
-	catch (NoSuchTemplateException nste) {
-	}
+	ddmTemplate = DDMTemplateLocalServiceUtil.fetchTemplate(groupId, PortalUtil.getClassNameId(DDMStructure.class), templateId, true);
 
 	if (ddmTemplate != null) {
-		ddmStructure = DDMStructureLocalServiceUtil.getStructure(ddmTemplate.getClassPK());
+		ddmStructure = DDMStructureLocalServiceUtil.fetchStructure(ddmTemplate.getClassPK());
 
-		ddmStructureName = ddmStructure.getName(locale);
+		if (ddmStructure != null) {
+			ddmStructureName = ddmStructure.getName(locale);
 
-		ddmTemplates = DDMTemplateLocalServiceUtil.getTemplates(ddmStructureGroupId, PortalUtil.getClassNameId(DDMStructure.class), ddmTemplate.getClassPK());
+			ddmTemplates = DDMTemplateLocalServiceUtil.getTemplates(ddmStructureGroupId, PortalUtil.getClassNameId(DDMStructure.class), ddmTemplate.getClassPK());
+		}
 	}
 }
 
@@ -112,14 +110,15 @@ else {
 	long refererPlid = ParamUtil.getLong(request, "refererPlid", LayoutConstants.DEFAULT_PLID);
 
 	if (refererPlid > 0) {
-		Layout refererLayout = LayoutLocalServiceUtil.getLayout(refererPlid);
+		Layout refererLayout = LayoutLocalServiceUtil.fetchLayout(refererPlid);
+		if (refererLayout != null) {
+			typeSettingsProperties = refererLayout.getTypeSettingsProperties();
 
-		typeSettingsProperties = refererLayout.getTypeSettingsProperties();
+			String defaultAssetPublisherPortletId = typeSettingsProperties.getProperty(LayoutTypePortletConstants.DEFAULT_ASSET_PUBLISHER_PORTLET_ID);
 
-		String defaultAssetPublisherPortletId = typeSettingsProperties.getProperty(LayoutTypePortletConstants.DEFAULT_ASSET_PUBLISHER_PORTLET_ID);
-
-		if (Validator.isNotNull(defaultAssetPublisherPortletId)) {
-			preselectCurrentLayout = true;
+			if (Validator.isNotNull(defaultAssetPublisherPortletId)) {
+				preselectCurrentLayout = true;
+			}
 		}
 	}
 }

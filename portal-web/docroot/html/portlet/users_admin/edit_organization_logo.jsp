@@ -23,9 +23,11 @@ long publicLayoutSetId = ParamUtil.getLong(request, "publicLayoutSetId");
 String logoURL = StringPool.BLANK;
 
 if (publicLayoutSetId != 0) {
-	LayoutSet publicLayoutSet = LayoutSetLocalServiceUtil.getLayoutSet(publicLayoutSetId);
+	LayoutSet publicLayoutSet = LayoutSetLocalServiceUtil.fetchLayoutSet(publicLayoutSetId);
 
-	logoURL = themeDisplay.getPathImage() + "/organization_logo?img_id=" + publicLayoutSet.getLogoId() + "&t=" + WebServerServletTokenUtil.getToken(publicLayoutSet.getLogoId());
+	if (publicLayoutSet != null) {
+		logoURL = themeDisplay.getPathImage() + "/organization_logo?img_id=" + publicLayoutSet.getLogoId() + "&t=" + WebServerServletTokenUtil.getToken(publicLayoutSet.getLogoId());
+	}
 }
 %>
 

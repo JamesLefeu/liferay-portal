@@ -26,9 +26,9 @@ Contact selContact = null;
 long userId = ParamUtil.getLong(request, "userId");
 
 if (userId > 0) {
-	selUser = UserLocalServiceUtil.getUser(userId);
+	selUser = UserLocalServiceUtil.fetchUser(userId);
 
-	if (selUser.getStatus() != WorkflowConstants.STATUS_INCOMPLETE) {
+	if (selUser == null || selUser.getStatus() != WorkflowConstants.STATUS_INCOMPLETE) {
 		throw new PrincipalException();
 	}
 

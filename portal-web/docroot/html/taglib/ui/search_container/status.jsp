@@ -25,17 +25,25 @@ Date statusDate = GetterUtil.getDate(request.getAttribute("liferay-ui:search-con
 <c:if test="<%= statusByUserId > 0 %>">
 
 	<%
-	User statusByUser = UserLocalServiceUtil.getUser(statusByUserId);
+	User statusByUser = UserLocalServiceUtil.fetchUser(statusByUserId);
+	String statusByUserFullname = "";
+	String statusByUserPortraitURL = "";
+	String statusByUserDisplayURL = "";
+	if (statusByUser != null) {
+		statusByUserFullname = statusByUser.getFullName();
+		statusByUserPortraitURL = statusByUser.getPortraitURL(themeDisplay);
+		statusByUserDisplayURL = statusByUser.getDisplayURL(themeDisplay);
+	}
 	%>
 
 	<liferay-util:buffer var="buffer">
 		<div class="user-status-tooltip">
 			<span class="user-status-avatar">
-				<img alt="<%= HtmlUtil.escapeAttribute(statusByUser.getFullName()) %>" class="user-status-avatar-image" src="<%= HtmlUtil.escape(statusByUser.getPortraitURL(themeDisplay)) %>" />
+				<img alt="<%= HtmlUtil.escapeAttribute(statusByUserFullname) %>" class="user-status-avatar-image" src="<%= HtmlUtil.escape(statusByUserPortraitURL) %>" />
 			</span>
 			<span class="user-status-info">
 				<div class="user-status-name">
-					<aui:a href="<%= statusByUser.getDisplayURL(themeDisplay) %>"><%= StringUtil.shorten(statusByUser.getFullName(), 20) %></aui:a>
+					<aui:a href="<%= statusByUserDisplayURL %>"><%= StringUtil.shorten(statusByUserFullname, 20) %></aui:a>
 				</div>
 				<div class="user-status-date">
 					<liferay-ui:message arguments="<%= LanguageUtil.getTimeDescription(pageContext, System.currentTimeMillis() - statusDate.getTime(), true) %>" key="x-ago" />

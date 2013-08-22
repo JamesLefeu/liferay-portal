@@ -21,7 +21,7 @@ Group liveGroup = (Group)request.getAttribute("edit_pages.jsp-liveGroup");
 boolean privateLayout = ((Boolean)request.getAttribute("edit_pages.jsp-privateLayout")).booleanValue();
 UnicodeProperties groupTypeSettings = (UnicodeProperties)request.getAttribute("edit_pages.jsp-groupTypeSettings");
 
-Group guestGroup = GroupLocalServiceUtil.getGroup(company.getCompanyId(), GroupConstants.GUEST);
+Group guestGroup = GroupLocalServiceUtil.fetchGroup(company.getCompanyId(), GroupConstants.GUEST);
 
 boolean mergeGuestPublicPages = PropertiesParamUtil.getBoolean(groupTypeSettings, request, "mergeGuestPublicPages");
 %>
@@ -32,7 +32,7 @@ boolean mergeGuestPublicPages = PropertiesParamUtil.getBoolean(groupTypeSettings
 
 <aui:fieldset>
 	<c:choose>
-		<c:when test="<%= !privateLayout && (liveGroup.getGroupId() != guestGroup.getGroupId()) %>">
+		<c:when test="<%= guestGroup != null && !privateLayout && (liveGroup.getGroupId() != guestGroup.getGroupId()) %>">
 
 			<%
 			String taglibLabel = LanguageUtil.format(pageContext, "merge-x-public-pages", HtmlUtil.escape(guestGroup.getDescriptiveName(locale)));

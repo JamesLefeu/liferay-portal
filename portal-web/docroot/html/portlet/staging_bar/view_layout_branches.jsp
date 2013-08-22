@@ -33,10 +33,14 @@ if (layoutRevisionId <= 0) {
 	layoutRevisionId = currentLayoutRevision.getLayoutRevisionId();
 }
 else {
-	currentLayoutRevision = LayoutRevisionLocalServiceUtil.getLayoutRevision(layoutRevisionId);
+	currentLayoutRevision = LayoutRevisionLocalServiceUtil.fetchLayoutRevision(layoutRevisionId);
+}
+long layoutBranchId = -1;
+if (currentLayoutRevision != null) {
+	layoutBranchId = currentLayoutRevision.getLayoutBranchId();
 }
 
-request.setAttribute("view_layout_branches.jsp-currenttLayoutBranchId", String.valueOf(currentLayoutRevision.getLayoutBranchId()));
+request.setAttribute("view_layout_branches.jsp-currenttLayoutBranchId", String.valueOf(layoutBranchId));
 %>
 
 <liferay-ui:success key="pageVariationAdded" message="page-variation-was-added" />
@@ -109,7 +113,7 @@ request.setAttribute("view_layout_branches.jsp-currenttLayoutBranchId", String.v
 				<%
 				String layoutBranchName = layoutBranch.getName();
 
-				if (layoutRevision.getLayoutBranchId() == currentLayoutRevision.getLayoutBranchId()) {
+				if (layoutRevision.getLayoutBranchId() == layoutBranchId) {
 					buffer.append("<strong>");
 				}
 
@@ -119,7 +123,7 @@ request.setAttribute("view_layout_branches.jsp-currenttLayoutBranchId", String.v
 					buffer.append(" (*)");
 				}
 
-				if (layoutRevision.getLayoutBranchId() == currentLayoutRevision.getLayoutBranchId()) {
+				if (layoutRevision.getLayoutBranchId() == layoutBranchId) {
 					buffer.append("</strong>");
 				}
 				%>

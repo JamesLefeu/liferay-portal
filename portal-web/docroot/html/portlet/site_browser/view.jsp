@@ -98,22 +98,26 @@ portletURL.setParameter("target", target);
 
 			if (includeUserPersonalSite) {
 				if (searchContainer.getStart() == 0) {
-					Group userPersonalSite = GroupLocalServiceUtil.getGroup(company.getCompanyId(), GroupConstants.USER_PERSONAL_SITE);
+					Group userPersonalSite = GroupLocalServiceUtil.fetchGroup(company.getCompanyId(), GroupConstants.USER_PERSONAL_SITE);
 
-					results.add(userPersonalSite);
+					if (userPersonalSite != null) {
+						results.add(userPersonalSite);
+					}
 				}
 
 				additionalSites++;
 			}
 
 			if (type.equals("child-sites")) {
-				Group parentGroup = GroupLocalServiceUtil.getGroup(groupId);
+				Group parentGroup = GroupLocalServiceUtil.fetchGroup(groupId);
 
-				List<Group> parentGroups = new ArrayList<Group>();
+				if (parentGroup != null) {
+					List<Group> parentGroups = new ArrayList<Group>();
 
-				parentGroups.add(parentGroup);
+					parentGroups.add(parentGroup);
 
-				groupParams.put("groupsTree", parentGroups);
+					groupParams.put("groupsTree", parentGroups);
+				}
 			}
 			else if (filterManageableGroups) {
 				groupParams.put("usersGroups", user.getUserId());
@@ -151,19 +155,21 @@ portletURL.setParameter("target", target);
 				groups = GroupLocalServiceUtil.getGroups(company.getCompanyId(), Layout.class.getName(), groupId, start, end);
 			}
 			else if (type.equals("parent-sites")) {
-				Group group = GroupLocalServiceUtil.getGroup(groupId);
+				Group group = GroupLocalServiceUtil.fetchGroup(groupId);
 
-				groups = group.getAncestors();
+				if (group != null) {
+					groups = group.getAncestors();
 
-				if (Validator.isNotNull(filter)) {
-					groups = _filterGroups(groups, filter);
+					if (Validator.isNotNull(filter)) {
+						groups = _filterGroups(groups, filter);
+					}
+
+					total = groups.size();
+
+					total += additionalSites;
+
+					searchContainer.setTotal(total);
 				}
-
-				total = groups.size();
-
-				total += additionalSites;
-
-				searchContainer.setTotal(total);
 			}
 			else if (searchTerms.isAdvancedSearch()) {
 				groups = GroupLocalServiceUtil.search(company.getCompanyId(), null, searchTerms.getName(), searchTerms.getDescription(), groupParams, searchTerms.isAndOperator(), start, end, searchContainer.getOrderByComparator());

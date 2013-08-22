@@ -61,11 +61,7 @@ List layoutList = layoutView.getList();
 
 				Layout curRootLayout = null;
 
-				try {
-					curRootLayout = LayoutLocalServiceUtil.getLayout(objId);
-				}
-				catch (Exception e) {
-				}
+				curRootLayout = LayoutLocalServiceUtil.fetchLayout(objId);
 
 				if (curRootLayout != null) {
 			%>

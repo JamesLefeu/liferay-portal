@@ -40,10 +40,14 @@ long[] selectedGroupIds = StringUtil.split(ParamUtil.getString(request, "selecte
 
 			<%
 			for (long groupId : selectedGroupIds) {
-				Group group = GroupLocalServiceUtil.getGroup(groupId);
+				Group group = GroupLocalServiceUtil.fetchGroup(groupId);
+				String groupDescName = "";
+				if (group != null) {
+					groupDescName = group.getDescriptiveName(locale);
+				}
 			%>
 
-				<aui:option label="<%= HtmlUtil.escape(group.getDescriptiveName(locale)) %>" selected="<%= displayTerms.getGroupId() == groupId %>" value="<%= groupId %>" />
+				<aui:option label="<%= HtmlUtil.escape(groupDescName) %>" selected="<%= displayTerms.getGroupId() == groupId %>" value="<%= groupId %>" />
 
 			<%
 			}

@@ -36,13 +36,12 @@ if (recordSet != null) {
 String ddmStructureName = StringPool.BLANK;
 
 if (ddmStructureId > 0) {
-	try {
-		DDMStructure ddmStructure = DDMStructureLocalServiceUtil.getStructure(ddmStructureId);
 
+	DDMStructure ddmStructure = DDMStructureLocalServiceUtil.fetchStructure(ddmStructureId);
+	if (ddmStructure != null) {
 		ddmStructureName = HtmlUtil.escape(ddmStructure.getName(locale));
 	}
-	catch (NoSuchStructureException nsse) {
-	}
+
 }
 %>
 
@@ -97,12 +96,7 @@ if (ddmStructureId > 0) {
 
 				<%
 				WorkflowDefinitionLink workflowDefinitionLink = null;
-
-				try {
-					workflowDefinitionLink = WorkflowDefinitionLinkLocalServiceUtil.getWorkflowDefinitionLink(company.getCompanyId(), themeDisplay.getScopeGroupId(), DDLRecordSet.class.getName(), recordSetId, 0, true);
-				}
-				catch (NoSuchWorkflowDefinitionLinkException nswdle) {
-				}
+				workflowDefinitionLink = WorkflowDefinitionLinkLocalServiceUtil.fetchWorkflowDefinitionLink(company.getCompanyId(), themeDisplay.getScopeGroupId(), DDLRecordSet.class.getName(), recordSetId, 0, true);
 				%>
 
 				<aui:option><%= LanguageUtil.get(pageContext, "no-workflow") %></aui:option>

@@ -33,9 +33,12 @@ if (record != null) {
 	recordVersion = record.getLatestRecordVersion();
 }
 
-DDLRecordSet recordSet = DDLRecordSetLocalServiceUtil.getRecordSet(recordSetId);
+DDLRecordSet recordSet = DDLRecordSetLocalServiceUtil.fetchRecordSet(recordSetId);
 
-DDMStructure ddmStructure = recordSet.getDDMStructure();
+DDMStructure ddmStructure = null;
+if (recordSet != null) {
+	recordSet.getDDMStructure();
+}
 
 Fields fields = null;
 
@@ -196,7 +199,10 @@ if (translating) {
 		<%
 		long classNameId = PortalUtil.getClassNameId(DDMStructure.class);
 
-		long classPK = recordSet.getDDMStructureId();
+		long classPK = 0;
+		if (recordSet != null) {
+			recordSet.getDDMStructureId();
+		}
 
 		if (formDDMTemplateId > 0) {
 			classNameId = PortalUtil.getClassNameId(DDMTemplate.class);
@@ -280,7 +286,11 @@ PortletURL portletURL = renderResponse.createRenderURL();
 portletURL.setParameter("struts_action", "/dynamic_data_lists/view_record_set");
 portletURL.setParameter("recordSetId", String.valueOf(recordSetId));
 
-PortalUtil.addPortletBreadcrumbEntry(request, recordSet.getName(locale), portletURL.toString());
+String recordSetName = "";
+if (recordSet != null) {
+	recordSetName = recordSet.getName(locale);
+}
+PortalUtil.addPortletBreadcrumbEntry(request, recordSetName, portletURL.toString());
 
 if (record != null) {
 	PortalUtil.addPortletBreadcrumbEntry(request, LanguageUtil.format(pageContext, "edit-x", ddmStructure.getName(locale)), currentURL);

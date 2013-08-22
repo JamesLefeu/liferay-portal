@@ -35,9 +35,9 @@ String rssDisplayStyle = portletPreferences.getValue("rssDisplayStyle", RSSUtil.
 String rssFeedType = portletPreferences.getValue("rssFeedType", RSSUtil.FEED_TYPE_DEFAULT);
 
 if (organizationId == 0) {
-	Group group = GroupLocalServiceUtil.getGroup(scopeGroupId);
+	Group group = GroupLocalServiceUtil.fetchGroup(scopeGroupId);
 
-	if (group.isOrganization()) {
+	if (group != null && group.isOrganization()) {
 		organizationId = group.getOrganizationId();
 	}
 }

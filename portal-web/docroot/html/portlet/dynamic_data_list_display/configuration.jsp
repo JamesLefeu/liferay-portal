@@ -25,9 +25,9 @@ DDLRecordSet selRecordSet = null;
 
 try {
 	if (Validator.isNotNull(recordSetId)) {
-		selRecordSet = DDLRecordSetLocalServiceUtil.getRecordSet(recordSetId);
+		selRecordSet = DDLRecordSetLocalServiceUtil.fetchRecordSet(recordSetId);
 
-		if (selRecordSet.getGroupId() != scopeGroupId) {
+		if (selRecordSet != null && selRecordSet.getGroupId() != scopeGroupId) {
 			selRecordSet = null;
 		}
 	}

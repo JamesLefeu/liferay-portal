@@ -64,9 +64,10 @@
 					Group curScopeGroup = themeDisplay.getScopeGroup();
 
 					if (curScopeGroup.isLayout()) {
-						Layout scopeLayout = LayoutLocalServiceUtil.getLayout(curScopeGroup.getClassPK());
-
-						scopeLabel = StringUtil.shorten(scopeLayout.getName(locale), 20);
+						Layout scopeLayout = LayoutLocalServiceUtil.fetchLayout(curScopeGroup.getClassPK());
+						if (scopeLayout != null) {
+							scopeLabel = StringUtil.shorten(scopeLayout.getName(locale), 20);
+						}
 					}
 					else {
 						scopeLabel = LanguageUtil.get(pageContext, "default");

@@ -46,15 +46,17 @@ String toggleControlsState = GetterUtil.getString(SessionClicks.get(request, "li
 			if (refererLayout != null) {
 				Group refererGroup = refererLayout.getGroup();
 
-				if (refererGroup.isUserGroup() && (themeDisplay.getRefererGroupId() > 0)) {
-					refererGroup = GroupLocalServiceUtil.getGroup(themeDisplay.getRefererGroupId());
+				if (refererGroup != null && refererGroup.isUserGroup() && (themeDisplay.getRefererGroupId() > 0)) {
+					refererGroup = GroupLocalServiceUtil.fetchGroup(themeDisplay.getRefererGroupId());
 
 					refererLayout = new VirtualLayout(refererLayout, refererGroup);
 				}
 
-				refererGroupDescriptiveName = refererGroup.getDescriptiveName(locale);
+				if (refererGroup != null) {
+					refererGroupDescriptiveName = refererGroup.getDescriptiveName(locale);
+				}
 
-				if (refererGroup.isUser() && (refererGroup.getClassPK() == user.getUserId())) {
+				if (refererGroup != null && refererGroup.isUser() && (refererGroup.getClassPK() == user.getUserId())) {
 					if (refererLayout.isPublicLayout()) {
 						refererGroupDescriptiveName = LanguageUtil.get(pageContext, "my-profile");
 					}

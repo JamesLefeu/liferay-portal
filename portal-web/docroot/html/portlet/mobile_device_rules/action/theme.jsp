@@ -25,20 +25,24 @@ if (Validator.isNull(selThemeId)) {
 	long classPK = BeanParamUtil.getLong(action, request, "classPK");
 
 	if (className.equals(Layout.class.getName())) {
-		Layout selLayout = LayoutLocalServiceUtil.getLayout(classPK);
+		Layout selLayout = LayoutLocalServiceUtil.fetchLayout(classPK);
 
-		groupId = selLayout.getGroupId();
+		if (selLayout != null) {
+			groupId = selLayout.getGroupId();
 
-		selThemeId = selLayout.getThemeId();
-		selColorSchemeId = selLayout.getColorSchemeId();
+			selThemeId = selLayout.getThemeId();
+			selColorSchemeId = selLayout.getColorSchemeId();
+		}
 	}
 	else if (className.equals(LayoutSet.class.getName())) {
-		LayoutSet selLayoutSet = LayoutSetLocalServiceUtil.getLayoutSet(classPK);
+		LayoutSet selLayoutSet = LayoutSetLocalServiceUtil.fetchLayoutSet(classPK);
 
-		groupId = selLayoutSet.getGroupId();
+		if (selLayoutSet != null) {
+			groupId = selLayoutSet.getGroupId();
 
-		selThemeId = selLayoutSet.getThemeId();
-		selColorSchemeId = selLayoutSet.getColorSchemeId();
+			selThemeId = selLayoutSet.getThemeId();
+			selColorSchemeId = selLayoutSet.getColorSchemeId();
+		}
 	}
 }
 

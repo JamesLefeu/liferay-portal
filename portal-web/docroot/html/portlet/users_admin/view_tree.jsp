@@ -355,11 +355,13 @@ if (organization != null) {
 												else if (parentOrganizationId > 0) {
 													List<Organization> organizationsTree = new ArrayList<Organization>();
 
-													Organization parentOrganization = OrganizationLocalServiceUtil.getOrganization(parentOrganizationId);
+													Organization parentOrganization = OrganizationLocalServiceUtil.fetchOrganization(parentOrganizationId);
 
-													organizationsTree.add(parentOrganization);
+													if (parentOrganization != null) {
+														organizationsTree.add(parentOrganization);
 
-													organizationParams.put("organizationsTree", organizationsTree);
+														organizationParams.put("organizationsTree", organizationsTree);
+													}
 												}
 
 												parentOrganizationId = OrganizationConstants.ANY_PARENT_ORGANIZATION_ID;

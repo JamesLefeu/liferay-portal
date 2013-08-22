@@ -234,9 +234,9 @@ else {
 			boolean question = threadAsQuestionByDefault;
 
 			if (message != null) {
-				thread = MBThreadLocalServiceUtil.getThread(threadId);
+				thread = MBThreadLocalServiceUtil.fetchThread(threadId);
 
-				if (thread.isQuestion() || message.isAnswer()) {
+				if ((thread != null && thread.isQuestion()) || message.isAnswer()) {
 					question = true;
 				}
 			}

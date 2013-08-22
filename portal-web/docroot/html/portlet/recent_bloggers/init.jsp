@@ -29,9 +29,9 @@ String displayStyle = portletPreferences.getValue("displayStyle", "user-name-and
 int max = GetterUtil.getInteger(portletPreferences.getValue("max", "10"));
 
 if (organizationId == 0) {
-	Group group = GroupLocalServiceUtil.getGroup(scopeGroupId);
+	Group group = GroupLocalServiceUtil.fetchGroup(scopeGroupId);
 
-	if (group.isOrganization()) {
+	if (group != null && group.isOrganization()) {
 		organizationId = group.getOrganizationId();
 	}
 }

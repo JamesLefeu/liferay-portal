@@ -27,11 +27,13 @@ if (layout.isTypeControlPanel()) {
 	long selPlid = ParamUtil.getLong(liferayPortletRequest, "selPlid");
 
 	if (selPlid != 0) {
-		selLayout = LayoutLocalServiceUtil.getLayout(selPlid);
+		selLayout = LayoutLocalServiceUtil.fetchLayout(selPlid);
 
-		privateLayout = selLayout.isPrivateLayout();
-		parentPlid = selLayout.getPlid();
-		parentLayoutId = selLayout.getLayoutId();
+		if (selLayout != null) {
+			privateLayout = selLayout.isPrivateLayout();
+			parentPlid = selLayout.getPlid();
+			parentLayoutId = selLayout.getLayoutId();
+		}
 	}
 	else {
 	 	privateLayout = GetterUtil.getBoolean(request.getAttribute("edit_pages.jsp-privateLayout"));
@@ -45,13 +47,16 @@ else {
 	parentLayoutId = layout.getParentLayoutId();
 }
 
-Group liveGroup = GroupLocalServiceUtil.getGroup(scopeGroupId);
+Group liveGroup = GroupLocalServiceUtil.fetchGroup(scopeGroupId);
 
-if (liveGroup.isStagingGroup()) {
+if (liveGroup != null && liveGroup.isStagingGroup()) {
 	liveGroup = liveGroup.getLiveGroup();
 }
 
-String rootNodeName = liveGroup.getLayoutRootNodeName(privateLayout, locale);
+String rootNodeName = "";
+if (liveGroup != null) {
+	rootNodeName = liveGroup.getLayoutRootNodeName(privateLayout, locale);
+}
 %>
 
 <aui:model-context model="<%= Layout.class %>" />

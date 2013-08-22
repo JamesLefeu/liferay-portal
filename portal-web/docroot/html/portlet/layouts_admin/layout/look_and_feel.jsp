@@ -33,7 +33,7 @@ ColorScheme selColorScheme = null;
 Theme selWapTheme = null;
 ColorScheme selWapColorScheme = null;
 
-LayoutSet layoutSet = LayoutSetLocalServiceUtil.getLayoutSet(groupId, privateLayout);
+LayoutSet layoutSet = LayoutSetLocalServiceUtil.fetchLayoutSet(groupId, privateLayout);
 
 if (selLayout != null) {
 	selTheme = selLayout.getTheme();
@@ -42,7 +42,7 @@ if (selLayout != null) {
 	selWapTheme = selLayout.getWapTheme();
 	selWapColorScheme = selLayout.getWapColorScheme();
 }
-else {
+else if (layoutSet != null) {
 	selTheme = layoutSet.getTheme();
 	selColorScheme = layoutSet.getColorScheme();
 

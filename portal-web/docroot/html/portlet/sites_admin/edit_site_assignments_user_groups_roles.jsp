@@ -28,7 +28,11 @@ Group group = (Group)request.getAttribute("edit_site_assignments.jsp-group");
 
 long userGroupId = ParamUtil.getLong(request, "userGroupId");
 
-UserGroup userGroup = UserGroupLocalServiceUtil.getUserGroup(userGroupId);
+UserGroup userGroup = UserGroupLocalServiceUtil.fetchUserGroup(userGroupId);
+String userGroupName = "";
+if (userGroup != null) {
+	userGroupName = userGroup.getName();
+}
 
 PortletURL portletURL = (PortletURL)request.getAttribute("edit_site_assignments.jsp-portletURL");
 
@@ -43,7 +47,7 @@ portletURL.setParameter("userGroupId", String.valueOf(userGroupId));
 	backURL="<%= redirect %>"
 	escapeXml="<%= false %>"
 	localizeTitle="<%= false %>"
-	title='<%= LanguageUtil.get(pageContext, "edit-site-roles-for-user-group") + ": " + HtmlUtil.escape(userGroup.getName()) %>'
+	title='<%= LanguageUtil.get(pageContext, "edit-site-roles-for-user-group") + ": " + HtmlUtil.escape(userGroupName) %>'
 />
 
 <%

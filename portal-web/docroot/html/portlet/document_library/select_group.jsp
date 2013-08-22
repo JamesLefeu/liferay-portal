@@ -63,7 +63,7 @@ String eventName = ParamUtil.getString(request, "eventName", liferayPortletRespo
 				additionalSites++;
 
 				if (searchContainer.getStart() == 0) {
-					Group userPersonalSite = GroupLocalServiceUtil.getGroup(company.getCompanyId(), GroupConstants.USER_PERSONAL_SITE);
+					Group userPersonalSite = GroupLocalServiceUtil.fetchGroup(company.getCompanyId(), GroupConstants.USER_PERSONAL_SITE);
 
 					results.add(userPersonalSite);
 				}

@@ -32,7 +32,7 @@ Layout selLayout = layout;
 long selPlid = ParamUtil.getLong(request, "selPlid");
 
 if (selPlid > 0) {
-	selLayout = LayoutLocalServiceUtil.getLayout(selPlid);
+	selLayout = LayoutLocalServiceUtil.fetchLayout(selPlid);
 }
 
 Group group = null;
@@ -43,7 +43,7 @@ long groupId = ParamUtil.getLong(request, "groupId");
 boolean privateLayout = ParamUtil.getBoolean(request, "privateLayout");
 
 if (groupId > 0) {
-	group = GroupLocalServiceUtil.getGroup(groupId);
+	group = GroupLocalServiceUtil.fetchGroup(groupId);
 }
 else if (selLayout != null) {
 	group = selLayout.getGroup();

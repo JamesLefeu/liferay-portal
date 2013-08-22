@@ -26,7 +26,7 @@ if (Validator.isNull(scopeType)) {
 	group = themeDisplay.getSiteGroup();
 }
 else if (scopeType.equals("company")) {
-	group = GroupLocalServiceUtil.getGroup(themeDisplay.getCompanyGroupId());
+	group = GroupLocalServiceUtil.fetchGroup(themeDisplay.getCompanyGroupId());
 }
 else if (scopeType.equals("layout")) {
 	for (Layout scopeGroupLayout : LayoutLocalServiceUtil.getScopeGroupLayouts(layout.getGroupId(), layout.isPrivateLayout())) {
@@ -51,6 +51,13 @@ availableGroups.add(company.getGroup());
 for (Layout scopeGroupLayout : LayoutLocalServiceUtil.getScopeGroupLayouts(layout.getGroupId(), layout.isPrivateLayout())) {
 	availableGroups.add(scopeGroupLayout.getScopeGroup());
 }
+
+String groupDescName = "";
+String groupIconURL = "";
+if (group != null) {
+	groupDescName = group.getDescriptiveName(locale);
+	groupIconURL = group.getIconURL(themeDisplay);
+}
 %>
 
 <liferay-util:include page="/html/portlet/portlet_configuration/tabs1.jsp">
@@ -59,7 +66,7 @@ for (Layout scopeGroupLayout : LayoutLocalServiceUtil.getScopeGroupLayouts(layou
 
 <aui:fieldset>
 	<aui:field-wrapper label="scope" name="scopeId">
-		<liferay-ui:icon-menu direction="down" icon="<%= group.getIconURL(themeDisplay) %>" message="<%= group.getDescriptiveName(locale) %>" showWhenSingleIcon="<%= true %>">
+		<liferay-ui:icon-menu direction="down" icon="<%= groupIconURL %>" message="<%= groupDescName %>" showWhenSingleIcon="<%= true %>">
 
 			<%
 			for (Group availableGroup : availableGroups) {
@@ -72,9 +79,11 @@ for (Layout scopeGroupLayout : LayoutLocalServiceUtil.getScopeGroupLayouts(layou
 				else if (availableGroup.isLayout()) {
 					availableGroupScopeType = "layout";
 
-					Layout availableGroupLayout = LayoutLocalServiceUtil.getLayout(availableGroup.getClassPK());
+					Layout availableGroupLayout = LayoutLocalServiceUtil.fetchLayout(availableGroup.getClassPK());
 
-					availableGroupScopeLayoutUuid = availableGroupLayout.getUuid();
+					if (availableGroupLayout != null) {
+						availableGroupScopeLayoutUuid = availableGroupLayout.getUuid();
+					}
 				}
 			%>
 

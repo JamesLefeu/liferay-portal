@@ -95,14 +95,15 @@ boolean showAddArticleButton = JournalPermission.contains(permissionChecker, sco
 
 				DDMStructure ddmStructure = null;
 
-				try {
-					ddmStructure = DDMStructureLocalServiceUtil.getStructure(scopeGroupId, PortalUtil.getClassNameId(JournalArticle.class), displayTerms.getStructureId());
-				}
-				catch (NoSuchStructureException nsse) {
-					ddmStructure = DDMStructureLocalServiceUtil.getStructure(themeDisplay.getCompanyGroupId(), PortalUtil.getClassNameId(JournalArticle.class), displayTerms.getStructureId());
+				ddmStructure = DDMStructureLocalServiceUtil.fetchStructure(scopeGroupId, PortalUtil.getClassNameId(JournalArticle.class), displayTerms.getStructureId());
+
+				if (ddmStructure == null)
+					ddmStructure = DDMStructureLocalServiceUtil.fetchStructure(themeDisplay.getCompanyGroupId(), PortalUtil.getClassNameId(JournalArticle.class), displayTerms.getStructureId());
 				}
 
-				ddmStructureName = ddmStructure.getName(locale);
+				if (ddmStructure != null) {
+					ddmStructureName = ddmStructure.getName(locale);
+				}
 			}
 			%>
 
@@ -127,9 +128,19 @@ boolean showAddArticleButton = JournalPermission.contains(permissionChecker, sco
 		<div class="alert alert-info">
 
 			<%
-			DDMTemplate ddmTemplate = DDMTemplateLocalServiceUtil.getTemplate(scopeGroupId, PortalUtil.getClassNameId(DDMStructure.class), displayTerms.getTemplateId());
+			DDMTemplate ddmTemplate = DDMTemplateLocalServiceUtil.fetchTemplate(scopeGroupId, PortalUtil.getClassNameId(DDMStructure.class), displayTerms.getTemplateId());
 
-			DDMStructure ddmStructure = DDMStructureLocalServiceUtil.getStructure(ddmTemplate.getClassPK());
+			DDMStructure ddmStructure = null;
+			if (ddmTemplate != null) {
+				ddmStructure = DDMStructureLocalServiceUtil.fetchStructure(ddmTemplate.getClassPK());
+			}
+
+			String ddmStructureKey = "";
+			String ddmStructureName = "";
+			if (ddmStructure != null) {
+				ddmStructureKey = ddmStructure.getStructureKey();
+				ddmStructureName = ddmStructure.getName(locale);
+			}
 			%>
 
 			<liferay-portlet:renderURL varImpl="addArticlesURL" windowState="<%= LiferayWindowState.MAXIMIZED.toString() %>">
@@ -138,11 +149,11 @@ boolean showAddArticleButton = JournalPermission.contains(permissionChecker, sco
 				<portlet:param name="redirect" value="<%= currentURL %>" />
 				<portlet:param name="backURL" value="<%= currentURL %>" />
 				<portlet:param name="folderId" value="<%= String.valueOf(JournalFolderConstants.DEFAULT_PARENT_FOLDER_ID) %>" />
-				<portlet:param name="structureId" value="<%= ddmStructure.getStructureKey() %>" />
+				<portlet:param name="structureId" value="<%= ddmStructureKey %>" />
 				<portlet:param name="templateId" value="<%= displayTerms.getTemplateId() %>" />
 			</liferay-portlet:renderURL>
 
-			<liferay-ui:message arguments="<%= ddmTemplate.getName(locale) %>" key="showing-content-filtered-by-template-x" /> (<a href="<%= addArticlesURL.toString() %>"><liferay-ui:message arguments="<%= ddmStructure.getName(locale) %>" key="add-new-x" /></a>)
+			<liferay-ui:message arguments="<%= ddmTemplate.getName(locale) %>" key="showing-content-filtered-by-template-x" /> (<a href="<%= addArticlesURL.toString() %>"><liferay-ui:message arguments="<%= ddmStructureName %>" key="add-new-x" /></a>)
 		</div>
 	</c:if>
 </c:if>

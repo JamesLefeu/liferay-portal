@@ -172,12 +172,14 @@ searchContainer.setEmptyResultsMessage(emptyResultsMessage);
 				for (int i = 0; i < userGroupRoles.size(); i++) {
 					UserGroupRole userGroupRole = userGroupRoles.get(i);
 
-					Role role = RoleLocalServiceUtil.getRole(userGroupRole.getRoleId());
+					Role role = RoleLocalServiceUtil.fetchRole(userGroupRole.getRoleId());
 
-					buffer.append(HtmlUtil.escape(role.getTitle(locale)));
+					if (role != null) {
+						buffer.append(HtmlUtil.escape(role.getTitle(locale)));
 
-					if ((i + 1) < userGroupRoles.size()) {
-						buffer.append(StringPool.COMMA_AND_SPACE);
+						if ((i + 1) < userGroupRoles.size()) {
+							buffer.append(StringPool.COMMA_AND_SPACE);
+						}
 					}
 				}
 

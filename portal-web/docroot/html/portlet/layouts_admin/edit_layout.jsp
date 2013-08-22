@@ -43,20 +43,15 @@ Set<Long> parentPlids = new HashSet<Long>();
 long parentPlid = refererPlid;
 
 while (parentPlid > 0) {
-	try {
-		Layout parentLayout = LayoutLocalServiceUtil.getLayout(parentPlid);
+	Layout parentLayout = LayoutLocalServiceUtil.fetchLayout(parentPlid);
 
-		if (parentLayout.isRootLayout()) {
-			break;
-		}
-
-		parentPlid = parentLayout.getParentPlid();
-
-		parentPlids.add(parentPlid);
-	}
-	catch (Exception e) {
+	if (parentLayout == null || parentLayout.isRootLayout()) {
 		break;
 	}
+
+	parentPlid = parentLayout.getParentPlid();
+
+	parentPlids.add(parentPlid);
 }
 
 LayoutRevision layoutRevision = LayoutStagingUtil.getLayoutRevision(selLayout);
@@ -71,9 +66,11 @@ if (layoutRevision != null) {
 	incomplete = StagingUtil.isIncomplete(selLayout, layoutSetBranchId);
 
 	if (incomplete) {
-		LayoutSetBranch layoutSetBranch = LayoutSetBranchLocalServiceUtil.getLayoutSetBranch(layoutSetBranchId);
+		LayoutSetBranch layoutSetBranch = LayoutSetBranchLocalServiceUtil.fetchLayoutSetBranch(layoutSetBranchId);
 
-		layoutSetBranchName = layoutSetBranch.getName();
+		if (layoutSetBranch != null) {
+			layoutSetBranchName = layoutSetBranch.getName();
+		}
 	}
 }
 
@@ -231,11 +228,15 @@ boolean showAddAction = ParamUtil.getBoolean(request, "showAddAction", true);
 				<c:if test="<%= (selLayout.getGroupId() != groupId) && (selLayoutGroup.isUserGroup()) %>">
 
 					<%
-					UserGroup userGroup = UserGroupLocalServiceUtil.getUserGroup(selLayoutGroup.getClassPK());
+					UserGroup userGroup = UserGroupLocalServiceUtil.fetchUserGroup(selLayoutGroup.getClassPK());
+					String userGroupName = "";
+					if (userGroup != null) {
+						userGroupName = userGroup.getName();
+					}
 					%>
 
 					<div class="alert alert-block">
-						<liferay-ui:message arguments="<%= HtmlUtil.escape(userGroup.getName()) %>" key="this-page-cannot-be-modified-because-it-belongs-to-the-user-group-x" />
+						<liferay-ui:message arguments="<%= HtmlUtil.escape(userGroupName) %>" key="this-page-cannot-be-modified-because-it-belongs-to-the-user-group-x" />
 					</div>
 				</c:if>
 

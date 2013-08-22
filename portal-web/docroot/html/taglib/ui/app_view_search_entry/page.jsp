@@ -130,20 +130,26 @@ List<String> versions = (List<String>)request.getAttribute("liferay-ui:app-view-
 
 		<%
 		for (MBMessage mbMessage : mbMessages) {
-			User userDisplay = UserLocalServiceUtil.getUser(mbMessage.getUserId());
+			User userDisplay = UserLocalServiceUtil.fetchUser(mbMessage.getUserId());
+			String userFullname = "";
+			String userPortraitURL = "";
+			if (userDisplay != null) {
+				userFullname = userDisplay.getFullName();
+				userPortaitURL = userDisplay.getPortraitURL(themeDisplay);
+			}
 		%>
 
 			<div class="entry-discussion">
 				<aui:a class="lfr-discussion-details" href="<%= url %>">
 					<div class="image">
-						<img alt="<%= HtmlUtil.escapeAttribute(userDisplay.getFullName()) %>" class="avatar" src="<%= HtmlUtil.escape(userDisplay.getPortraitURL(themeDisplay)) %>" />
+						<img alt="<%= HtmlUtil.escapeAttribute(userFullname) %>" class="avatar" src="<%= HtmlUtil.escape(userPortaitURL) %>" />
 					</div>
 
 					<span class="title">
 						<liferay-ui:icon
 							image="message"
 							label="<%= true %>"
-							message='<%= LanguageUtil.format(locale, "comment-by-x", HtmlUtil.escape(userDisplay.getFullName())) %>'
+							message='<%= LanguageUtil.format(locale, "comment-by-x", HtmlUtil.escape(userFullname)) %>'
 						/>
 					</span>
 

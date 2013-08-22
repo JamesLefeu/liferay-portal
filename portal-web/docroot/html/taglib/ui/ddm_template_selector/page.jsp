@@ -34,7 +34,11 @@ boolean showEmptyOption = GetterUtil.getBoolean((String)request.getAttribute("li
 
 long ddmTemplateGroupId = PortletDisplayTemplateUtil.getDDMTemplateGroupId(themeDisplay.getScopeGroupId());
 
-Group ddmTemplateGroup = GroupLocalServiceUtil.getGroup(ddmTemplateGroupId);
+Group ddmTemplateGroup = GroupLocalServiceUtil.fetchGroup(ddmTemplateGroupId);
+String ddmTemplateGroupDescName = "";
+if (ddmTemplateGroup != null) {
+	ddmTemplateGroupDescName = ddmTemplateGroup.getDescriptiveName(locale);
+}
 %>
 
 <aui:input id="displayStyleGroupId" name="preferences--displayStyleGroupId--" type="hidden" value="<%= String.valueOf(displayStyleGroupId) %>" />
@@ -104,7 +108,7 @@ Group ddmTemplateGroup = GroupLocalServiceUtil.getGroup(ddmTemplateGroupId);
 	%>
 
 	<c:if test="<%= (groupPortletDDMTemplates != null) && !groupPortletDDMTemplates.isEmpty() %>">
-		<optgroup label="<%= HtmlUtil.escape(ddmTemplateGroup.getDescriptiveName(locale)) %>">
+		<optgroup label="<%= HtmlUtil.escape(ddmTemplateGroupDescName) %>">
 
 		<%
 		for (DDMTemplate groupPortletDDMTemplate : groupPortletDDMTemplates) {
@@ -127,7 +131,7 @@ Group ddmTemplateGroup = GroupLocalServiceUtil.getGroup(ddmTemplateGroupId);
 	id="selectDDMTemplate"
 	image="<%= icon %>"
 	label="<%= true %>"
-	message='<%= LanguageUtil.format(pageContext, "manage-display-templates-for-x", HtmlUtil.escape(ddmTemplateGroup.getDescriptiveName(locale)), false) %>'
+	message='<%= LanguageUtil.format(pageContext, "manage-display-templates-for-x", HtmlUtil.escape(ddmTemplateGroupDescName), false) %>'
 	url="javascript:;"
 />
 

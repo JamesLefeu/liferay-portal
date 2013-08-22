@@ -122,7 +122,15 @@ String keywords = ParamUtil.getString(request, "keywords");
 		>
 
 			<%
-			MBMessage message = MBMessageLocalServiceUtil.getMessage(searchResult.getClassPK());
+			MBMessage message = MBMessageLocalServiceUtil.fetchMessage(searchResult.getClassPK());
+			long messageId = -1;
+			long categoryId = -1;
+			String subject = "";
+			if (message != null) {
+				messageId = message.getMessageId();
+				categoryId = message.getCategoryId();
+				subject = message.getSubject();
+			}
 
 			Summary summary = searchResult.getSummary();
 			%>
@@ -130,18 +138,18 @@ String keywords = ParamUtil.getString(request, "keywords");
 			<portlet:renderURL var="rowURL">
 				<portlet:param name="struts_action" value="/message_boards/view_message" />
 				<portlet:param name="redirect" value="<%= currentURL %>" />
-				<portlet:param name="messageId" value="<%= String.valueOf(message.getMessageId()) %>" />
+				<portlet:param name="messageId" value="<%= String.valueOf(messageId) %>" />
 			</portlet:renderURL>
 
 			<liferay-ui:app-view-search-entry
 				containerIcon="../common/conversation"
-				containerName="<%= MBUtil.getAbsolutePath(renderRequest, message.getCategoryId()) %>"
+				containerName="<%= MBUtil.getAbsolutePath(renderRequest, categoryId) %>"
 				containerType='<%= LanguageUtil.get(locale, "category") %>'
 				cssClass='<%= MathUtil.isEven(index) ? "search alt" : "search" %>'
 				description="<%= (summary != null) ? HtmlUtil.escape(summary.getContent()) : StringPool.BLANK %>"
 				fileEntryTuples="<%= searchResult.getFileEntryTuples() %>"
 				queryTerms="<%= hits.getQueryTerms() %>"
-				title="<%= (summary != null) ? HtmlUtil.escape(summary.getTitle()) : HtmlUtil.escape(message.getSubject()) %>"
+				title="<%= (summary != null) ? HtmlUtil.escape(summary.getTitle()) : HtmlUtil.escape(subject) %>"
 				url="<%= rowURL %>"
 			/>
 		</liferay-ui:search-container-row>

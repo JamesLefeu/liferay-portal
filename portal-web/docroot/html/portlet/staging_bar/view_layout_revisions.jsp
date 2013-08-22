@@ -24,7 +24,7 @@ LayoutRevision recentLayoutRevision = null;
 long currentLayoutRevisionId = StagingUtil.getRecentLayoutRevisionId(request, layoutSetBranchId, plid);
 
 if (currentLayoutRevisionId > 0) {
-	recentLayoutRevision = LayoutRevisionLocalServiceUtil.getLayoutRevision(currentLayoutRevisionId);
+	recentLayoutRevision = LayoutRevisionLocalServiceUtil.fetchLayoutRevision(currentLayoutRevisionId);
 }
 else {
 	recentLayoutRevision = LayoutStagingUtil.getLayoutRevision(layout);
@@ -33,6 +33,11 @@ else {
 }
 
 List<LayoutRevision> rootLayoutRevisions = LayoutRevisionLocalServiceUtil.getChildLayoutRevisions(layoutSetBranchId, LayoutRevisionConstants.DEFAULT_PARENT_LAYOUT_REVISION_ID, plid, QueryUtil.ALL_POS, QueryUtil.ALL_POS, new LayoutRevisionIdComparator(true));
+
+long recentLayoutBranchId = -1;
+if (recentLayoutRevision != null) {
+	recentLayoutBranchId = recentLayoutRevision.getLayoutBranchId();
+}
 %>
 
 <c:if test="<%= !rootLayoutRevisions.isEmpty() %>">
@@ -44,7 +49,7 @@ List<LayoutRevision> rootLayoutRevisions = LayoutRevisionLocalServiceUtil.getChi
 				LayoutBranch layoutBranch = rootLayoutRevision.getLayoutBranch();
 			%>
 
-				<aui:option label="<%= HtmlUtil.escape(layoutBranch.getName()) %>" selected="<%= recentLayoutRevision.getLayoutBranchId() == rootLayoutRevision.getLayoutBranchId() %>" value="<%= rootLayoutRevision.getLayoutRevisionId() %>" />
+				<aui:option label="<%= HtmlUtil.escape(layoutBranch.getName()) %>" selected="<%= recentLayoutBranchId == rootLayoutRevision.getLayoutBranchId() %>" value="<%= rootLayoutRevision.getLayoutRevisionId() %>" />
 
 			<%
 			}
@@ -60,7 +65,7 @@ List<LayoutRevision> rootLayoutRevisions = LayoutRevisionLocalServiceUtil.getChi
 		for (LayoutRevision rootLayoutRevision : rootLayoutRevisions) {
 		%>
 
-			<div class="layout-variation-container <%= (recentLayoutRevision.getLayoutBranchId() == rootLayoutRevision.getLayoutBranchId()) ? StringPool.BLANK : "hide" %>" id="<portlet:namespace/><%= rootLayoutRevision.getLayoutRevisionId() %>">
+			<div class="layout-variation-container <%= (recentLayoutBranchId == rootLayoutRevision.getLayoutBranchId()) ? StringPool.BLANK : "hide" %>" id="<portlet:namespace/><%= rootLayoutRevision.getLayoutRevisionId() %>">
 				<c:if test="<%= rootLayoutRevisions.size() > 1 %>">
 
 					<%
@@ -167,13 +172,15 @@ List<LayoutRevision> rootLayoutRevisions = LayoutRevisionLocalServiceUtil.getChi
 						>
 
 							<%
-							User curUser = UserLocalServiceUtil.getUserById(curLayoutRevision.getUserId());
+							User curUser = UserLocalServiceUtil.fetchUserById(curLayoutRevision.getUserId());
 
-							buffer.append("<a class=\"user-handle\" href=\"");
-							buffer.append(curUser.getDisplayURL(themeDisplay));
-							buffer.append("\">");
-							buffer.append(curUser.getFullName());
-							buffer.append("</a>");
+							if (curUser != null) {
+								buffer.append("<a class=\"user-handle\" href=\"");
+								buffer.append(curUser.getDisplayURL(themeDisplay));
+								buffer.append("\">");
+								buffer.append(curUser.getFullName());
+								buffer.append("</a>");
+							}
 							%>
 
 						</liferay-ui:search-container-column-text>

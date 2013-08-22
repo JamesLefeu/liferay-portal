@@ -24,7 +24,7 @@ LayoutBranch layoutBranch = null;
 long layoutBranchId = ParamUtil.getLong(request, "layoutBranchId");
 
 if (layoutBranchId > 0) {
-	layoutBranch = LayoutBranchLocalServiceUtil.getLayoutBranch(layoutBranchId);
+	layoutBranch = LayoutBranchLocalServiceUtil.fetchLayoutBranch(layoutBranchId);
 }
 
 long layoutRevisionId = ParamUtil.getLong(request, "layoutRevisionId");

@@ -43,13 +43,13 @@ details.
 		</p>
 
 		<p>
-			Example - Get a user model object from the local service:
+			Example - Fetch a user model object from the local service:
 		</p>
 
 		<pre><code>import com.liferay.portal.service.UserLocalServiceUtil;
 import com.liferay.portal.model.User;
 ...
-User test_user = UserLocalServiceUtil.getUserByEmailAddress(&quot;test@liferay.com&quot;);</code></pre>
+User test_user = UserLocalServiceUtil.fetchUserByEmailAddress(1,&quot;test@liferay.com&quot;);</code></pre>
 
 		<h3>Built-in Portlet Models and Services</h3>
 
@@ -146,7 +146,7 @@ String[] locales = LocalizationUtil.getAvailableLocales(xml);</code></pre>
 			</li>
 			<li>
 				<a href="com/liferay/portal/model/package-summary.html" title="com.liferay.portal.model">com.liferay.portal.model</a>
-			</li>
+			</li>`
 			<li>
 				<a href="com/liferay/portal/security/permission/package-summary.html" title="com.liferay.portal.security.permission">com.liferay.portal.security.permission</a>
 			</li>

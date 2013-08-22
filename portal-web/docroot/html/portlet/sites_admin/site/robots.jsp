@@ -24,9 +24,9 @@ LayoutSet publicLayoutSet = LayoutSetLocalServiceUtil.getLayoutSet(liveGroupId, 
 String publicVirtualHostName = publicLayoutSet.getVirtualHostname();
 
 if (Validator.isNull(publicVirtualHostName) && Validator.isNotNull(PropsValues.VIRTUAL_HOSTS_DEFAULT_SITE_NAME) ) {
-	Group defaultGroup = GroupLocalServiceUtil.getGroup(company.getCompanyId(), PropsValues.VIRTUAL_HOSTS_DEFAULT_SITE_NAME);
+	Group defaultGroup = GroupLocalServiceUtil.fetchGroup(company.getCompanyId(), PropsValues.VIRTUAL_HOSTS_DEFAULT_SITE_NAME);
 
-	if (publicLayoutSet.getGroupId() == defaultGroup.getGroupId()) {
+	if (defaultGroup != null && publicLayoutSet.getGroupId() == defaultGroup.getGroupId()) {
 		publicVirtualHostName = company.getVirtualHostname();
 	}
 }

@@ -27,7 +27,11 @@ ResultRow row = (ResultRow)request.getAttribute(WebKeys.SEARCH_CONTAINER_RESULT_
 
 MDRRuleGroupInstance mdrRuleGroupInstance = (MDRRuleGroupInstance)row.getObject();
 
-MDRRuleGroup mdrRuleGroup = MDRRuleGroupLocalServiceUtil.getMDRRuleGroup(mdrRuleGroupInstance.getRuleGroupId());
+MDRRuleGroup mdrRuleGroup = MDRRuleGroupLocalServiceUtil.fetchMDRRuleGroup(mdrRuleGroupInstance.getRuleGroupId());
+String mdrRuleGroupName = "";
+if (mdrRuleGroup != null) {
+	mdrRuleGroupName = mdrRuleGroup.getName(locale);
+}
 %>
 
 <liferay-ui:icon-menu>
@@ -49,7 +53,7 @@ MDRRuleGroup mdrRuleGroup = MDRRuleGroupLocalServiceUtil.getMDRRuleGroup(mdrRule
 	<c:if test="<%= MDRRuleGroupInstancePermissionUtil.contains(permissionChecker, mdrRuleGroupInstance.getRuleGroupInstanceId(), ActionKeys.PERMISSIONS) %>">
 		<liferay-security:permissionsURL
 			modelResource="<%= MDRRuleGroupInstance.class.getName() %>"
-			modelResourceDescription="<%= mdrRuleGroup.getName(locale) %>"
+			modelResourceDescription="<%= mdrRuleGroupName %>"
 			resourcePrimKey="<%= String.valueOf(mdrRuleGroupInstance.getRuleGroupInstanceId()) %>"
 			var="permissionsURL"
 			windowState="<%= themeDisplay.isStateExclusive() ? LiferayWindowState.POP_UP.toString() : windowState.toString() %>"

@@ -301,10 +301,12 @@ public class JournalTemplateAdapter implements JournalTemplate {
 
 		try {
 			DDMStructure ddmStructure =
-				DDMStructureLocalServiceUtil.getStructure(
+				DDMStructureLocalServiceUtil.fetchStructure(
 					_ddmTemplate.getClassPK());
 
-			return ddmStructure.getStructureKey();
+			if (ddmStructure != null) {
+				return ddmStructure.getStructureKey();
+			}
 		}
 		catch (Exception e) {
 			_log.error(e, e);
@@ -629,16 +631,20 @@ public class JournalTemplateAdapter implements JournalTemplate {
 
 		try {
 			DDMStructure ddmStructure =
-				DDMStructureLocalServiceUtil.getStructure(
+				DDMStructureLocalServiceUtil.fetchStructure(
 					getGroupId(),
 					PortalUtil.getClassNameId(JournalArticle.class),
 					structureId, true);
 
-			_ddmTemplate.setClassPK(ddmStructure.getPrimaryKey());
+			if (ddmStructure != null) {
+				_ddmTemplate.setClassPK(ddmStructure.getPrimaryKey());
+			}
 		}
 		catch (Exception e) {
 			_log.error(e, e);
 		}
+
+		return;
 	}
 
 	@Override

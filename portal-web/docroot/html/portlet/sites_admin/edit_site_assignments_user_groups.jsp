@@ -120,12 +120,14 @@ userGroupSearch.setEmptyResultsMessage(emptyResultsMessage);
 				for (int i = 0; i < userGroupGroupRoles.size(); i++) {
 					UserGroupGroupRole userGroupGroupRole = userGroupGroupRoles.get(i);
 
-					Role role = RoleLocalServiceUtil.getRole(userGroupGroupRole.getRoleId());
+					Role role = RoleLocalServiceUtil.fetchRole(userGroupGroupRole.getRoleId());
 
-					buffer.append(HtmlUtil.escape(role.getTitle(locale)));
+					if (role != null) {
+						buffer.append(HtmlUtil.escape(role.getTitle(locale)));
 
-					if ((i + 1) < userGroupGroupRoles.size()) {
-						buffer.append(StringPool.COMMA_AND_SPACE);
+						if ((i + 1) < userGroupGroupRoles.size()) {
+							buffer.append(StringPool.COMMA_AND_SPACE);
+						}
 					}
 				}
 				%>

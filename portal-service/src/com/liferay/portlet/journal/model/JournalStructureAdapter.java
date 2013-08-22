@@ -530,17 +530,21 @@ public class JournalStructureAdapter implements JournalStructure {
 
 		try {
 			DDMStructure parentDDMStructure =
-				DDMStructureLocalServiceUtil.getStructure(
+				DDMStructureLocalServiceUtil.fetchStructure(
 					getGroupId(),
 					PortalUtil.getClassNameId(JournalArticle.class.getName()),
 					parentStructureId);
 
-			_ddmStructure.setParentStructureId(
-				parentDDMStructure.getStructureId());
+			if (parentDDMStructure != null) {
+				_ddmStructure.setParentStructureId(
+					parentDDMStructure.getStructureId());
+			}
 		}
 		catch (Exception e) {
 			_log.error(e, e);
 		}
+
+		return;
 	}
 
 	@Override

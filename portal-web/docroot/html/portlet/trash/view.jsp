@@ -25,9 +25,9 @@ String keywords = ParamUtil.getString(request, "keywords");
 
 long groupId = themeDisplay.getScopeGroupId();
 
-Group group = GroupLocalServiceUtil.getGroup(groupId);
+Group group = GroupLocalServiceUtil.fetchGroup(groupId);
 
-if (group.isStagingGroup() && tabs1.equals("live")) {
+if (group != null && group.isStagingGroup() && tabs1.equals("live")) {
 	groupId = group.getLiveGroupId();
 }
 
@@ -75,7 +75,7 @@ portletURL.setParameter("tabs1", tabs1);
 
 </liferay-ui:error>
 
-<c:if test="<%= group.isStagingGroup() %>">
+<c:if test="<%= group != null && group.isStagingGroup() %>">
 	<liferay-ui:tabs
 		names="staging,live"
 		url="<%= portletURL.toString() %>"

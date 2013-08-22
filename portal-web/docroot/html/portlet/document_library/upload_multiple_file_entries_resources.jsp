@@ -65,7 +65,11 @@ if ((fileEntryTypeId == -1) && !fileEntryTypes.isEmpty()) {
 }
 
 if (fileEntryTypeId > 0) {
-	fileEntryType = DLFileEntryTypeLocalServiceUtil.getFileEntryType(fileEntryTypeId);
+	fileEntryType = DLFileEntryTypeLocalServiceUtil.fetchFileEntryType(fileEntryTypeId);
+}
+String fileEntryTypeName = "";
+if (fileEntryType != null) {
+	fileEntryTypeName = fileEntryType.getName(locale);
 }
 
 long assetClassPK = 0;
@@ -100,7 +104,7 @@ long assetClassPK = 0;
 
 					<div class="document-type-selector">
 
-						<liferay-ui:icon-menu direction="down" icon='<%= themeDisplay.getPathThemeImages() + "/common/copy.png" %>' id="groupSelector" message='<%= (fileEntryTypeId > 0) ? HtmlUtil.escape(fileEntryType.getName(locale)) : "basic-document" %>' showWhenSingleIcon="<%= true %>">
+						<liferay-ui:icon-menu direction="down" icon='<%= themeDisplay.getPathThemeImages() + "/common/copy.png" %>' id="groupSelector" message='<%= (fileEntryTypeId > 0) ? HtmlUtil.escape(fileEntryTypeName) : "basic-document" %>' showWhenSingleIcon="<%= true %>">
 
 							<%
 							for (DLFileEntryType curFileEntryType : fileEntryTypes) {
@@ -131,18 +135,19 @@ long assetClassPK = 0;
 
 					<%
 					if (fileEntryTypeId > 0) {
-						try {
-							List<DDMStructure> ddmStructures = fileEntryType.getDDMStructures();
+						List<DDMStructure> ddmStructures = null;
+						if (fileEntryType != null) {
+							ddmStructures = fileEntryType.getDDMStructures();
+						}
 
+						if (ddmStructures != null) {
 							for (DDMStructure ddmStructure : ddmStructures) {
 								Fields fields = null;
 
-								try {
-									DLFileEntryMetadata fileEntryMetadata = DLFileEntryMetadataLocalServiceUtil.getFileEntryMetadata(ddmStructure.getStructureId(), fileVersionId);
+								DLFileEntryMetadata fileEntryMetadata = DLFileEntryMetadataLocalServiceUtil.fetchFileEntryMetadata(ddmStructure.getStructureId(), fileVersionId);
 
+								if (fileEntryMetadata != null) {
 									fields = StorageEngineUtil.getFields(fileEntryMetadata.getDDMStorageId());
-								}
-								catch (Exception e) {
 								}
 					%>
 
@@ -158,8 +163,6 @@ long assetClassPK = 0;
 
 					<%
 							}
-						}
-						catch (Exception e) {
 						}
 					}
 					%>

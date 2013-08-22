@@ -28,9 +28,11 @@ long parentCategoryId = BeanParamUtil.getLong(category, request, "parentCategory
 String defaultDisplayStyle = MBCategoryConstants.DEFAULT_DISPLAY_STYLE;
 
 if ((category == null) && (parentCategoryId > 0)) {
-	MBCategory parentCategory = MBCategoryLocalServiceUtil.getCategory(parentCategoryId);
+	MBCategory parentCategory = MBCategoryLocalServiceUtil.fetchCategory(parentCategoryId);
 
-	defaultDisplayStyle = parentCategory.getDisplayStyle();
+	if (parentCategory != null) {
+		defaultDisplayStyle = parentCategory.getDisplayStyle();
+	}
 }
 
 String displayStyle = BeanParamUtil.getString(category, request, "displayStyle", defaultDisplayStyle);
@@ -109,12 +111,10 @@ else {
 			<%
 			String parentCategoryName = StringPool.BLANK;
 
-			try {
-				MBCategory parentCategory = MBCategoryLocalServiceUtil.getCategory(parentCategoryId);
+			MBCategory parentCategory = MBCategoryLocalServiceUtil.fetchCategory(parentCategoryId);
 
+			if (parentCategory != null) {
 				parentCategoryName = parentCategory.getName();
-			}
-			catch (NoSuchCategoryException nsce) {
 			}
 			%>
 

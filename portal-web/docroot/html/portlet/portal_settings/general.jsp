@@ -19,11 +19,7 @@
 <%
 VirtualHost virtualHost = null;
 
-try {
-	virtualHost = VirtualHostLocalServiceUtil.getVirtualHost(company.getCompanyId(), 0);
-}
-catch (Exception e) {
-}
+virtualHost = VirtualHostLocalServiceUtil.fetchVirtualHost(company.getCompanyId(), 0);
 
 String cdnHostHttp = PrefsPropsUtil.getString(company.getCompanyId(), PropsKeys.CDN_HOST_HTTP, PropsValues.CDN_HOST_HTTP);
 String cdnHostHttps = PrefsPropsUtil.getString(company.getCompanyId(), PropsKeys.CDN_HOST_HTTPS, PropsValues.CDN_HOST_HTTPS);

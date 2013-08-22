@@ -37,7 +37,7 @@ int roleType = ParamUtil.getInteger(request, "roleType", RoleConstants.TYPE_SITE
 Organization organization = null;
 
 if (group.isOrganization()) {
-	organization = OrganizationLocalServiceUtil.getOrganization(group.getClassPK());
+	organization = OrganizationLocalServiceUtil.fetchOrganization(group.getClassPK());
 }
 
 PortletURL portletURL = renderResponse.createRenderURL();
