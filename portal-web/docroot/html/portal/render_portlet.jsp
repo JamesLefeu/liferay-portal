@@ -323,11 +323,11 @@ long previousSiteGroupId = themeDisplay.getSiteGroupId();
 
 Group siteGroup = GroupLocalServiceUtil.fetchGroup(themeDisplay.getSiteGroupId());
 
-if (siteGroup != null && siteGroup.isStagingGroup()) {
+if ((siteGroup != null) && siteGroup.isStagingGroup()) {
 	siteGroup = siteGroup.getLiveGroup();
 }
 
-if (siteGroup != null && siteGroup.isStaged() && !siteGroup.isStagedRemotely() && !siteGroup.isStagedPortlet(portletId)) {
+if ((siteGroup != null) && siteGroup.isStaged() && !siteGroup.isStagedRemotely() && !siteGroup.isStagedPortlet(portletId)) {
 	themeDisplay.setParentGroupId(siteGroup.getGroupId());
 }
 

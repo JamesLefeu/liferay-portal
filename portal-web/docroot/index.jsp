@@ -49,7 +49,8 @@ if (layoutSet != null) {
 			ThemeDisplay themeDisplay = servicePreAction.initThemeDisplay(request, response);
 
 			redirect = PortalUtil.getLayoutURL(layout, themeDisplay);
-		} else {
+		}
+		else {
 			redirect = PortalUtil.getPathMain();
 		}
 	}
