@@ -25,11 +25,7 @@ long companyId = BeanParamUtil.getLong(selCompany, request, "companyId");
 
 VirtualHost virtualHost = null;
 
-try {
-	virtualHost = VirtualHostLocalServiceUtil.getVirtualHost(companyId, 0);
-}
-catch (Exception e) {
-}
+virtualHost = VirtualHostLocalServiceUtil.fetchVirtualHost(companyId, 0);
 %>
 
 <liferay-ui:header
