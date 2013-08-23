@@ -29,16 +29,17 @@ String jPassword = (String)session.getAttribute("j_password");
 if (PropsValues.PORTAL_JAAS_ENABLE && (jUserName != null)) {
 	long jUserId = GetterUtil.getLong(jUserName);
 
-	User jUser = UserLocalServiceUtil.getUser(jUserId);
-
-	if (PropsValues.PORTAL_JAAS_AUTH_TYPE.equals("emailAddress")) {
-		jUserName = jUser.getEmailAddress();
-	}
-	else if (PropsValues.PORTAL_JAAS_AUTH_TYPE.equals("screenName")) {
-		jUserName = jUser.getScreenName();
-	}
-	else if (PropsValues.PORTAL_JAAS_AUTH_TYPE.equals("login")) {
-		jUserName = jUser.getLogin();
+	User jUser = UserLocalServiceUtil.fetchUser(jUserId);
+	if (jUser != null) {
+		if (PropsValues.PORTAL_JAAS_AUTH_TYPE.equals("emailAddress")) {
+			jUserName = jUser.getEmailAddress();
+		}
+		else if (PropsValues.PORTAL_JAAS_AUTH_TYPE.equals("screenName")) {
+			jUserName = jUser.getScreenName();
+		}
+		else if (PropsValues.PORTAL_JAAS_AUTH_TYPE.equals("login")) {
+			jUserName = jUser.getLogin();
+		}
 	}
 }
 %>
