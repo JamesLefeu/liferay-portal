@@ -30,6 +30,7 @@ if (PropsValues.PORTAL_JAAS_ENABLE && (jUserName != null)) {
 	long jUserId = GetterUtil.getLong(jUserName);
 
 	User jUser = UserLocalServiceUtil.fetchUser(jUserId);
+
 	if (jUser != null) {
 		if (PropsValues.PORTAL_JAAS_AUTH_TYPE.equals("emailAddress")) {
 			jUserName = jUser.getEmailAddress();

@@ -323,12 +323,14 @@ long previousSiteGroupId = themeDisplay.getSiteGroupId();
 
 Group siteGroup = GroupLocalServiceUtil.fetchGroup(themeDisplay.getSiteGroupId());
 
-if ((siteGroup != null) && siteGroup.isStagingGroup()) {
-	siteGroup = siteGroup.getLiveGroup();
-}
+if (siteGroup != null) {
+	if (siteGroup.isStagingGroup()) {
+		siteGroup = siteGroup.getLiveGroup();
+	}
 
-if ((siteGroup != null) && siteGroup.isStaged() && !siteGroup.isStagedRemotely() && !siteGroup.isStagedPortlet(portletId)) {
-	themeDisplay.setParentGroupId(siteGroup.getGroupId());
+	if (siteGroup.isStaged() && !siteGroup.isStagedRemotely() && !siteGroup.isStagedPortlet(portletId)) {
+		themeDisplay.setParentGroupId(siteGroup.getGroupId());
+	}
 }
 
 portletDisplay.recycle();
