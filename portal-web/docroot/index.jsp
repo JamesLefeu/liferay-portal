@@ -41,13 +41,18 @@ if (layoutSet != null) {
 	long defaultPlid = LayoutLocalServiceUtil.getDefaultPlid(layoutSet.getGroupId(), layoutSet.isPrivateLayout());
 
 	if (defaultPlid != LayoutConstants.DEFAULT_PLID) {
-		Layout layout = LayoutLocalServiceUtil.getLayout(defaultPlid);
+		Layout layout = LayoutLocalServiceUtil.fetchLayout(defaultPlid);
 
-		ServicePreAction servicePreAction = (ServicePreAction)InstancePool.get(ServicePreAction.class.getName());
+		if (layout != null) {
+			ServicePreAction servicePreAction = (ServicePreAction)InstancePool.get(ServicePreAction.class.getName());
 
-		ThemeDisplay themeDisplay = servicePreAction.initThemeDisplay(request, response);
+			ThemeDisplay themeDisplay = servicePreAction.initThemeDisplay(request, response);
 
-		redirect = PortalUtil.getLayoutURL(layout, themeDisplay);
+			redirect = PortalUtil.getLayoutURL(layout, themeDisplay);
+		}
+		else {
+			redirect = PortalUtil.getPathMain();
+		}
 	}
 	else {
 		redirect = PortalUtil.getPathMain();
