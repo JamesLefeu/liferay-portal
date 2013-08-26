@@ -38,6 +38,8 @@ String redirect = null;
 LayoutSet layoutSet = (LayoutSet)request.getAttribute(WebKeys.VIRTUAL_HOST_LAYOUT_SET);
 
 if (layoutSet != null) {
+	redirect = PortalUtil.getPathMain();
+
 	long defaultPlid = LayoutLocalServiceUtil.getDefaultPlid(layoutSet.getGroupId(), layoutSet.isPrivateLayout());
 
 	if (defaultPlid != LayoutConstants.DEFAULT_PLID) {
@@ -50,12 +52,6 @@ if (layoutSet != null) {
 
 			redirect = PortalUtil.getLayoutURL(layout, themeDisplay);
 		}
-		else {
-			redirect = PortalUtil.getPathMain();
-		}
-	}
-	else {
-		redirect = PortalUtil.getPathMain();
 	}
 }
 else {
