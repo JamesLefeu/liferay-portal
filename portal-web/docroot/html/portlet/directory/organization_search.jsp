@@ -64,7 +64,6 @@ String type = displayTerms.getType();
 Organization parentOrganization = null;
 
 if (displayTerms.getParentOrganizationId() > 0) {
-
 	parentOrganization = OrganizationLocalServiceUtil.fetchOrganization(displayTerms.getParentOrganizationId());
 }
 %>

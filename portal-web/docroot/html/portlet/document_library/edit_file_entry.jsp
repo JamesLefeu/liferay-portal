@@ -380,11 +380,11 @@ editFileEntryURL.setParameter("workflowAction", String.valueOf(WorkflowConstants
 						for (DDMStructure ddmStructure : ddmStructures) {
 							Fields fields = null;
 
-								DLFileEntryMetadata fileEntryMetadata = DLFileEntryMetadataLocalServiceUtil.fetchFileEntryMetadata(ddmStructure.getStructureId(), fileVersionId);
+							DLFileEntryMetadata fileEntryMetadata = DLFileEntryMetadataLocalServiceUtil.fetchFileEntryMetadata(ddmStructure.getStructureId(), fileVersionId);
 
-								if (fileEntryMetadata != null) {
-									fields = StorageEngineUtil.getFields(fileEntryMetadata.getDDMStorageId());
-								}
+							if (fileEntryMetadata != null) {
+								fields = StorageEngineUtil.getFields(fileEntryMetadata.getDDMStorageId());
+							}
 				%>
 
 							<liferay-ddm:html
