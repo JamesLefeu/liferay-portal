@@ -131,18 +131,19 @@ long assetClassPK = 0;
 
 					<%
 					if (fileEntryTypeId > 0) {
-						try {
-							List<DDMStructure> ddmStructures = fileEntryType.getDDMStructures();
+						List<DDMStructure> ddmStructures = null;
+						if (fileEntryType != null) {
+							ddmStructures = fileEntryType.getDDMStructures();
+						}
 
+						if (ddmStructures != null) {
 							for (DDMStructure ddmStructure : ddmStructures) {
 								Fields fields = null;
 
-								try {
-									DLFileEntryMetadata fileEntryMetadata = DLFileEntryMetadataLocalServiceUtil.getFileEntryMetadata(ddmStructure.getStructureId(), fileVersionId);
+								DLFileEntryMetadata fileEntryMetadata = DLFileEntryMetadataLocalServiceUtil.fetchFileEntryMetadata(ddmStructure.getStructureId(), fileVersionId);
 
+								if (fileEntryMetadata != null) {
 									fields = StorageEngineUtil.getFields(fileEntryMetadata.getDDMStorageId());
-								}
-								catch (Exception e) {
 								}
 					%>
 
@@ -158,8 +159,6 @@ long assetClassPK = 0;
 
 					<%
 							}
-						}
-						catch (Exception e) {
 						}
 					}
 					%>
