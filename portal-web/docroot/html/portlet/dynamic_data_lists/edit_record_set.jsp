@@ -36,8 +36,8 @@ if (recordSet != null) {
 String ddmStructureName = StringPool.BLANK;
 
 if (ddmStructureId > 0) {
-
 	DDMStructure ddmStructure = DDMStructureLocalServiceUtil.fetchStructure(ddmStructureId);
+
 	if (ddmStructure != null) {
 		ddmStructureName = HtmlUtil.escape(ddmStructure.getName(locale));
 	}
