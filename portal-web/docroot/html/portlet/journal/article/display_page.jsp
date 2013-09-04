@@ -31,16 +31,12 @@ String layoutBreadcrumb = StringPool.BLANK;
 if (Validator.isNotNull(layoutUuid)) {
 	selLayout = LayoutLocalServiceUtil.fetchLayoutByUuidAndGroupId(layoutUuid, themeDisplay.getSiteGroupId(), false);
 
-	if (selLayout != null)
-		layoutBreadcrumb = _getLayoutBreadcrumb(selLayout, locale);
+	if (selLayout == null)
+		selLayout = LayoutLocalServiceUtil.fetchLayoutByUuidAndGroupId(layoutUuid, themeDisplay.getSiteGroupId(), true);
 	}
 
-	if (selLayout == null) {
-		selLayout = LayoutLocalServiceUtil.fetchLayoutByUuidAndGroupId(layoutUuid, themeDisplay.getSiteGroupId(), true);
-
-		if (selLayout != null) {
-			layoutBreadcrumb = _getLayoutBreadcrumb(selLayout, locale);
-		}
+	if (selLayout != null) {
+		layoutBreadcrumb = _getLayoutBreadcrumb(selLayout, locale);
 	}
 }
 
@@ -563,10 +559,12 @@ Group parentGroup = themeDisplay.getSiteGroup();
 		defaultDisplayLayout = LayoutLocalServiceUtil.fetchLayoutByUuidAndGroupId(layoutUuid, scopeGroupId, true);
 	}
 
-	String defDispLayoutName = null;
+	String defautDisplayLayoutName = null;
+
 	if (defaultDisplayLayout != null) {
 		defaultDisplayLayout = defaultDisplayLayout.toEscapedModel();
-		defDispLayoutName = defaultDisplayLayout.getName(locale);
+
+		defautDisplayLayoutName = defaultDisplayLayout.getName(locale);
 	}
 
 	AssetRendererFactory assetRendererFactory = AssetRendererFactoryRegistryUtil.getAssetRendererFactoryByClassName(JournalArticle.class.getName());
@@ -577,7 +575,7 @@ Group parentGroup = themeDisplay.getSiteGroup();
 	%>
 
 	<c:if test="<%= Validator.isNotNull(urlViewInContext) %>">
-		<a href="<%= urlViewInContext %>" target="blank"><%= LanguageUtil.format(pageContext, "view-content-in-x", defDispLayoutName) %></a>
+		<a href="<%= urlViewInContext %>" target="blank"><%= LanguageUtil.format(pageContext, "view-content-in-x", defautDisplayLayoutName) %></a>
 	</c:if>
 </c:if>
 
