@@ -397,12 +397,10 @@ request.setAttribute("view.jsp-portletURL", portletURL);
 				<%
 				String bannedUserDisplayURL = StringPool.BLANK;
 
-				try {
-					User bannedUser = UserLocalServiceUtil.getUser(ban.getBanUserId());
+				User bannedUser = UserLocalServiceUtil.fetchUser(ban.getBanUserId());
 
+				if (bannedUser != null) {
 					bannedUserDisplayURL = bannedUser.getDisplayURL(themeDisplay);
-				}
-				catch (NoSuchUserException nsue) {
 				}
 				%>
 
@@ -415,12 +413,10 @@ request.setAttribute("view.jsp-portletURL", portletURL);
 				<%
 				String bannedByUserDisplayURL = StringPool.BLANK;
 
-				try {
-					User bannedByUser = UserLocalServiceUtil.getUser(ban.getUserId());
+				User bannedByUser = UserLocalServiceUtil.fetchUser(ban.getUserId());
 
+				if (bannedByUser != null) {
 					bannedByUserDisplayURL = bannedByUser.getDisplayURL(themeDisplay);
-				}
-				catch (NoSuchUserException nsue) {
 				}
 				%>
 
