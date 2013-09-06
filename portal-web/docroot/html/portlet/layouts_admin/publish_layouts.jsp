@@ -105,16 +105,10 @@ else if (cmd.equals("publish_to_remote") || selGroup.isCompany()) {
 
 long selPlid = ParamUtil.getLong(request, "selPlid", LayoutConstants.DEFAULT_PARENT_LAYOUT_ID);
 
-Layout selLayout = null;
+Layout selLayout = LayoutLocalServiceUtil.fetchLayout(selPlid);
 
-try {
-	selLayout = LayoutLocalServiceUtil.getLayout(selPlid);
-
-	if (selLayout.isPrivateLayout()) {
-		tabs1 = "private-pages";
-	}
-}
-catch (NoSuchLayoutException nsle) {
+if ((selLayout != null) && selLayout.isPrivateLayout()) {
+	tabs1 = "private-pages";
 }
 
 boolean privateLayout = ParamUtil.getBoolean(request, "privateLayout", tabs1.equals("private-pages"));
@@ -126,10 +120,9 @@ long[] selectedLayoutIds = GetterUtil.getLongValues(StringUtil.split(SessionTree
 List<Layout> selectedLayouts = new ArrayList<Layout>();
 
 for (int i = 0; i < selectedLayoutIds.length; i++) {
-	try {
-		selectedLayouts.add(LayoutLocalServiceUtil.getLayout(selGroupId, privateLayout, selectedLayoutIds[i]));
-	}
-	catch (NoSuchLayoutException nsle) {
+	Layout layout = LayoutLocalServiceUtil.fetchLayout(selGroupId, privateLayout, selectedLayoutIds[i]);
+	if (layout != null) {
+		selectedLayouts.add(layout);
 	}
 }
 
