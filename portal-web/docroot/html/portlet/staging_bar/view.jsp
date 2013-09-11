@@ -48,12 +48,11 @@ if (layout != null) {
 	String liveFriendlyURL = null;
 
 	if (liveGroup != null) {
-		try {
-			liveLayout = LayoutLocalServiceUtil.getLayoutByUuidAndGroupId(layout.getUuid(), liveGroup.getGroupId(), layout.isPrivateLayout());
+		liveLayout = LayoutLocalServiceUtil.fetchLayoutByUuidAndGroupId(layout.getUuid(), liveGroup.getGroupId(), layout.isPrivateLayout());
 
+		if (liveLayout != null) {
 			liveFriendlyURL = PortalUtil.getLayoutFriendlyURL(liveLayout, themeDisplay);
-		}
-		catch (Exception e) {
+		} else {
 			liveFriendlyURL = PortalUtil.getGroupFriendlyURL(liveGroup, layout.isPrivateLayout(), themeDisplay);
 		}
 
@@ -63,12 +62,11 @@ if (layout != null) {
 	String stagingFriendlyURL = null;
 
 	if (stagingGroup != null) {
-		try {
-			Layout stagingLayout = LayoutLocalServiceUtil.getLayoutByUuidAndGroupId(layout.getUuid(), stagingGroup.getGroupId(), layout.isPrivateLayout());
+		Layout stagingLayout = LayoutLocalServiceUtil.fetchLayoutByUuidAndGroupId(layout.getUuid(), stagingGroup.getGroupId(), layout.isPrivateLayout());
 
+		if (stagingLayout != null) {
 			stagingFriendlyURL = PortalUtil.getLayoutFriendlyURL(stagingLayout, themeDisplay);
-		}
-		catch (Exception e) {
+		} else {
 			stagingFriendlyURL = PortalUtil.getGroupFriendlyURL(stagingGroup, layout.isPrivateLayout(), themeDisplay);
 		}
 
@@ -371,12 +369,10 @@ if (layout != null) {
 
 														if (lastImportLayoutSetBranchId > 0) {
 
-															try {
-																LayoutSetBranch lastImportLayoutSetBranch = LayoutSetBranchLocalServiceUtil.getLayoutSetBranch(lastImportLayoutSetBranchId);
+															LayoutSetBranch lastImportLayoutSetBranch = LayoutSetBranchLocalServiceUtil.fetchLayoutSetBranch(lastImportLayoutSetBranchId);
 
+															if (lastImportLayoutSetBranch != null) {
 																lastImportLayoutSetBranchName = lastImportLayoutSetBranch.getName();
-															}
-															catch (Exception e) {
 															}
 														}
 
@@ -395,14 +391,12 @@ if (layout != null) {
 														long lastImportLayoutRevisionId = GetterUtil.getLong(typeSettingsProperties.getProperty("last-import-layout-revision-id"));
 
 														if (lastImportLayoutRevisionId > 0) {
-															try {
-																LayoutRevision lastImportLayoutRevision = LayoutRevisionLocalServiceUtil.getLayoutRevision(lastImportLayoutRevisionId);
+															LayoutRevision lastImportLayoutRevision = LayoutRevisionLocalServiceUtil.fetchLayoutRevision(lastImportLayoutRevisionId);
 
+															if (lastImportLayoutRevision != null) {
 																lastImportLayoutBranchName = lastImportLayoutRevision.getLayoutBranch().getName();
 
 																layoutRevisions = LayoutRevisionLocalServiceUtil.getChildLayoutRevisions(lastImportLayoutRevision.getLayoutSetBranchId(), LayoutRevisionConstants.DEFAULT_PARENT_LAYOUT_REVISION_ID, lastImportLayoutRevision.getPlid());
-															}
-															catch (Exception e) {
 															}
 														}
 
@@ -415,12 +409,10 @@ if (layout != null) {
 														String lastImportUserUuid = GetterUtil.getString(typeSettingsProperties.getProperty("last-import-user-uuid"));
 
 														if (Validator.isNotNull(lastImportUserUuid)) {
-															try {
-																User publisher = UserLocalServiceUtil.getUserByUuidAndCompanyId(lastImportUserUuid, company.getCompanyId());
+															User publisher = UserLocalServiceUtil.getUserByUuidAndCompanyId(lastImportUserUuid, company.getCompanyId());
 
+															if (publisher != null) {
 																publisherName = publisher.getFullName();
-															}
-															catch (Exception e) {
 															}
 														}
 
