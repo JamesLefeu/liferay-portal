@@ -109,7 +109,7 @@ else {
 			<%
 			String parentCategoryName = StringPool.BLANK;
 
-			MBCategory parentCategory = MBCategoryLocalServiceUtil.fetchCategory(parentCategoryId);
+			MBCategory parentCategory = MBCategoryLocalServiceUtil.fetchMBCategory(parentCategoryId);
 
 			if (parentCategory != null) {
 				parentCategoryName = parentCategory.getName();

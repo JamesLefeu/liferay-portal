@@ -169,7 +169,7 @@ MBThread thread = (MBThread)request.getAttribute("edit_message.jsp-thread");
 					</c:if>
 
 					<%
-					MBMessage parentMessage = MBMessageLocalServiceUtil.fetchMessage(message.getParentMessageId());
+					MBMessage parentMessage = MBMessageLocalServiceUtil.fetchMBMessage(message.getParentMessageId());
 					%>
 
 					<c:if test="<%= parentMessage != null %>">

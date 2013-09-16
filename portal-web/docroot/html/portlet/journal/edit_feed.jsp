@@ -29,7 +29,7 @@ String newFeedId = ParamUtil.getString(request, "newFeedId");
 String structureId = BeanParamUtil.getString(feed, request, "structureId");
 String templateId = BeanParamUtil.getString(feed, request, "templateId");
 
-List<DDMTemplate> ddmTemplates = new ArrayList<DDMTemplate>(); 
+List<DDMTemplate> ddmTemplates = new ArrayList<DDMTemplate>();
 DDMStructure ddmStructure = null;
 
 String ddmStructureName = StringPool.BLANK;
@@ -39,14 +39,12 @@ if (Validator.isNotNull(structureId)) {
 
 }
 
-List<DDMTemplate> ddmTemplates = new ArrayList<DDMTemplate>();
-
 if (ddmStructure != null) {
 	ddmTemplates.addAll(DDMTemplateLocalServiceUtil.getTemplates(themeDisplay.getCompanyGroupId(), PortalUtil.getClassNameId(DDMStructure.class), ddmStructure.getStructureId()));
 	ddmTemplates.addAll(DDMTemplateLocalServiceUtil.getTemplates(themeDisplay.getSiteGroupId(), PortalUtil.getClassNameId(DDMStructure.class), ddmStructure.getStructureId()));
 	ddmStructureName = ddmStructure.getName(locale);
 }
-else if (Validator.isNotNull(templateId)) { 
+else if (Validator.isNotNull(templateId)) {
 	DDMTemplate ddmTemplate = DDMTemplateLocalServiceUtil.fetchTemplate(themeDisplay.getSiteGroupId(), PortalUtil.getClassNameId(DDMStructure.class), templateId, true);
 
 	if (ddmTemplate != null) {

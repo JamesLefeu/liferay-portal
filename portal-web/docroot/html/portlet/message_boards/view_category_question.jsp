@@ -94,7 +94,7 @@ portletURL.setParameter("mbCategoryId", String.valueOf(categoryId));
 	>
 
 		<%
-		MBMessage message = MBMessageLocalServiceUtil.fetchMessage(thread.getRootMessageId());
+		MBMessage message = MBMessageLocalServiceUtil.fetchMBMessage(thread.getRootMessageId());
 
 		if (message == null) {
 			_log.error("Thread requires missing root message id " + thread.getRootMessageId());

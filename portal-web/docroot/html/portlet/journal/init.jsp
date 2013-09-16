@@ -17,7 +17,6 @@
 <%@ include file="/html/portlet/init.jsp" %>
 
 <%@ page import="com.liferay.portal.LocaleException" %><%@
-page import="com.liferay.portal.NoSuchLayoutException" %><%@
 page import="com.liferay.portal.kernel.search.Hits" %><%@
 page import="com.liferay.portal.kernel.search.Indexer" %><%@
 page import="com.liferay.portal.kernel.search.IndexerRegistryUtil" %><%@
