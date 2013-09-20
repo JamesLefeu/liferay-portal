@@ -14,8 +14,16 @@
 
 package com.liferay.portal.tools;
 
-import com.liferay.portal.kernel.io.unsync.UnsyncByteArrayOutputStream;
-import com.liferay.portal.kernel.io.unsync.UnsyncPrintWriter;
+import java.io.File;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.tools.ant.DirectoryScanner;
+
 import com.liferay.portal.kernel.util.FastDateFormatFactoryUtil;
 import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.PortalClassLoaderUtil;
@@ -23,10 +31,8 @@ import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.SystemProperties;
-import com.liferay.portal.kernel.util.UnsyncPrintWriterPool;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.ModelHintsConstants;
-import com.liferay.portal.scripting.ruby.RubyExecutor;
 import com.liferay.portal.servlet.filters.aggregate.AggregateFilter;
 import com.liferay.portal.servlet.filters.aggregate.FileAggregateContext;
 import com.liferay.portal.util.FastDateFormatFactoryImpl;
@@ -34,20 +40,13 @@ import com.liferay.portal.util.FileImpl;
 import com.liferay.portal.util.PortalImpl;
 import com.liferay.portal.util.PortalUtil;
 import com.liferay.portal.util.PropsImpl;
-
-import java.io.File;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.tools.ant.DirectoryScanner;
-
+import com.vaadin.sass.internal.ScssStylesheet;
+import com.vaadin.sass.internal.resolver.CustomVaadinResolver;
 /**
  * @author Brian Wing Shun Chan
  * @author Raymond Augé
  * @author Eduardo Lundgren
+ * @author James Lefeu
  */
 public class SassToCssBuilder {
 
@@ -79,7 +78,12 @@ public class SassToCssBuilder {
 				dirName = arguments.get("sass.dir." + i);
 
 				if (Validator.isNotNull(dirName)) {
-					dirNames.add(dirName);
+					if (i == 0 ) {
+						_vaadinPath = dirName;
+					}
+					else {
+						dirNames.add(dirName);
+					}
 				}
 				else {
 					break;
@@ -126,20 +130,10 @@ public class SassToCssBuilder {
 
 		_initUtil(classLoader);
 
-		_rubyScript = StringUtil.read(
-			classLoader,
-			"com/liferay/portal/servlet/filters/dynamiccss/main.rb");
 
 		_tempDir = SystemProperties.get(SystemProperties.TMP_DIR);
 
 		for (String dirName : dirNames) {
-
-			// Create a new Ruby executor as a workaround for a bug with Ruby
-			// that breaks "ant build-css" when it parses too many CSS files
-
-			_rubyExecutor = new RubyExecutor();
-
-			_rubyExecutor.setExecuteInSeparateThread(false);
 
 			_parseSassDirectory(dirName, docrootDirName, portalCommonDirName);
 		}
@@ -261,44 +255,41 @@ public class SassToCssBuilder {
 		}
 	}
 
+	private void setImportPath(String path) throws URISyntaxException {
+		ScssStylesheet.addStylesheetResolver(
+				new CustomVaadinResolver(path));
+	}
+
 	private void _parseSassFile(
 			String docrootDirName, String portalCommonDirName, String fileName)
 		throws Exception {
 
-		String filePath = docrootDirName.concat(fileName);
+		if (!fileName.contains("deprecated")) {
 
-		File file = new File(filePath);
-		File cacheFile = getCacheFile(filePath);
+			File file = new File(fileName);//
+			File cacheFile = getCacheFile(fileName);
 
-		Map<String, Object> inputObjects = new HashMap<String, Object>();
+			ScssStylesheet scss = ScssStylesheet.get(docrootDirName + fileName);
+			if(scss == null){
+				System.err.println("The scss file " + docrootDirName + fileName
+						+ " could not be found.");
+				return;
+			}
 
-		inputObjects.put("commonSassPath", portalCommonDirName);
-		inputObjects.put("content", _getContent(docrootDirName, fileName));
-		inputObjects.put("cssRealPath", filePath);
-		inputObjects.put("cssThemePath", _getCssThemePath(filePath));
-		inputObjects.put("sassCachePath", _tempDir);
+			setImportPath(portalCommonDirName);
+			setImportPath(docrootDirName);
+			setImportPath(_tempDir);
+			setImportPath(docrootDirName + _vaadinPath);
+			setImportPath(_getCssThemePath(fileName));
 
-		UnsyncByteArrayOutputStream unsyncByteArrayOutputStream =
-			new UnsyncByteArrayOutputStream();
+			scss.compile();
 
-		UnsyncPrintWriter unsyncPrintWriter = UnsyncPrintWriterPool.borrow(
-			unsyncByteArrayOutputStream);
+			FileUtil.write(docrootDirName + cacheFile, scss.toString());
 
-		inputObjects.put("out", unsyncPrintWriter);
-
-		_rubyExecutor.eval(null, inputObjects, null, _rubyScript);
-
-		unsyncPrintWriter.flush();
-
-		String parsedContent = unsyncByteArrayOutputStream.toString();
-
-		FileUtil.write(cacheFile, parsedContent);
-
-		cacheFile.setLastModified(file.lastModified());
+			cacheFile.setLastModified(file.lastModified());
+		}
 	}
 
-	private RubyExecutor _rubyExecutor;
-	private String _rubyScript;
+	private static String _vaadinPath;
 	private String _tempDir;
-
 }

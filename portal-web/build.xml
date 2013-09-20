@@ -411,9 +411,11 @@
 			newenvironment="true"
 		>
 			<jvmarg value="-Dliferay.lib.portal.dir=${basedir}/../lib/portal" />
-			<arg value="sass.dir.0=/html/css" />
-			<arg value="sass.dir.1=/html/portlet" />
-			<arg value="sass.dir.2=/html/themes" />
+			<jvmarg value="-agentlib:jdwp=transport=dt_socket,address=localhost:8000,server=y,suspend=y" />
+			<arg value="sass.dir.0=/html/stylesheets" />
+			<arg value="sass.dir.1=/html/css" />
+			<arg value="sass.dir.2=/html/portlet" />
+			<arg value="sass.dir.3=/html/themes" />
 			<arg value="sass.docroot.dir=${basedir}/docroot" />
 			<arg value="sass.portal.common.dir=${basedir}/docroot/html/css/common" />
 		</java>
